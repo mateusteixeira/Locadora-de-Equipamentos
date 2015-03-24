@@ -16,11 +16,11 @@ import java.sql.SQLException;
  */
 public class ConnectionController {
 	
-	private final String BASE   = "business";
-	private final String SERVER = "127.0.0.1";
-	private final String PORT   = "5433";
+	private final String BASE   = "LocadoraDeEquipamentos";
+	private final String SERVER = "localhost";
+	private final String PORT   = "5432";
 	private final String USER   = "postgres";
-	private final String PASS   = "753910";
+	private final String PASS   = "admin";
 	
 	private final String URL = "jdbc:postgresql://" + SERVER + ":" + PORT + "/" + BASE;
 	
