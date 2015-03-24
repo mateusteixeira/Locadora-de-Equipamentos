@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.eclipse.persistence.jpa.jpql.parser.AnonymousExpressionVisitor;
-
 import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
 
 public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
@@ -21,7 +19,7 @@ public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
 		this.valores = new ArrayList<T>(valores);
 
 		List<Annotation> c = annotationByAnnotation(valores.get(0).getClass(), (Class<? extends Annotation>) ColumnTableSearch.class);
-		colunas.add(new Coluna(f.getName(), a.header(), a.width()));
+		//colunas.add(new Coluna(f.getName(), a.header(), a.width()));
 	}
 
 	public List<Field> fieldByAnnotation(Class<?> classe, Class<? extends Annotation> annotation) {

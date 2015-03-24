@@ -1,59 +1,37 @@
 package com.datacoper.locacaoequipamentos.client.formspadrao;
 
-import javax.swing.JFrame;
-
-import java.awt.GridLayout;
 import java.awt.BorderLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
-import java.awt.Rectangle;
-import java.awt.Dimension;
-
-import javax.swing.JLabel;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Component;
-import java.awt.Toolkit;
-
-import javax.swing.border.LineBorder;
-
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.UIManager;
-import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTable;
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTablePesquisa;
 import com.datacoper.locacaoequipamentos.common.service.Service;
 import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
-import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.DAOFactory;
-
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class FormPadraoPesquisa<T> extends JDialog {
 

@@ -22,21 +22,19 @@ import com.datacoper.locacaoequipamentos.util.ParametrosEnum;
  * @author Java
  */
 public abstract class DAOFactory {
-
-	private static DAOFactory daoFactory;
 	private static Connection connection;
+	private static final String PERSISTENCE_TYPE = ParametersLoader.getPersistenceType();
 
 	public static <T> T getInstance(Class<T> classDAO) throws Exception {
-		String persistenceType = ParametersLoader.getPersistenceType();
 		Class<?> dao = null;
 		List<ParametersDAO> daos = ParametersLoader.getListaDAO();
 		try {
 			for (ParametersDAO p : daos) {
 				if (p.getClassDao() == classDAO) {
-					if (persistenceType.equalsIgnoreCase("jdbc")) {
+					if (PERSISTENCE_TYPE.equalsIgnoreCase("jdbc")) {
 						dao = p.getClassJDBC();
 						return instantiate(classDAO);
-					} else if (persistenceType.equalsIgnoreCase("jpa")) {
+					} else if (PERSISTENCE_TYPE.equalsIgnoreCase("jpa")) {
 						dao = p.getClassJPA();
 					}
 				}
@@ -59,11 +57,13 @@ public abstract class DAOFactory {
 		return persistenceType;
 	}
 
-	private static Connection getConnection() {
-		if (connection == null) {
-			connection = ConnectionController.getInstance().getConnection();
-		}
-		return connection;
+	private static Object getConnection() {
+			if (PERSISTENCE_TYPE.equalsIgnoreCase("jdbc")) {
+				return ConnectionController.getInstance().getConnection();
+			} else if (PERSISTENCE_TYPE.equalsIgnoreCase("jpa")) {
+				
+			}
+			return null;
 	}
 
 }
