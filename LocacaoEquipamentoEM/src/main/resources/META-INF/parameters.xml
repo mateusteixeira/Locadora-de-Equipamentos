@@ -1,0 +1,11 @@
+<parameters>
+	<persistenceType>jdbc</persistenceType>
+	<daos>
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Cliente</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.ClienteDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.ClienteDAOJpa</classJPA>-->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.ClienteDAOJdbc</classJDBC>
+		</parametersDAO>
+	</daos>
+</parameters>
