@@ -119,6 +119,5 @@ public class FormPrincipal extends JFrame {
 	
 	private <T> void abreTelaPesquisa(FormPadraoPesquisa<T> form) {
 		form.abrirPesquisa();
-		form.setVisible(true);
 	}
 }
