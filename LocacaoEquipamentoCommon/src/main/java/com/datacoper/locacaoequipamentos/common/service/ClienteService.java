@@ -8,7 +8,7 @@ package com.datacoper.locacaoequipamentos.common.service;
 import java.util.List;
 
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
-import com.datacoper.locacaoequipamentos.common.model.Cliente;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 
 /**
  *
@@ -17,14 +17,14 @@ import com.datacoper.locacaoequipamentos.common.model.Cliente;
 
 public interface ClienteService extends Service {
 
-	void gravar(Cliente cliente) throws BusinessException;
+	void gravar(Pessoa cliente) throws BusinessException;
 
 	// boolean updateCliente(Cliente cliente);
 
-	void excluir(Cliente cliente) throws BusinessException;
+	void excluir(Pessoa cliente) throws BusinessException;
 
 	//
-	List<Cliente> encontrarTodosClientes();
+	List<Pessoa> encontrarTodosClientes() throws BusinessException;
 
 	// List<Cliente> buscaClienteAll(int ordem, int ascDesc);
 	//

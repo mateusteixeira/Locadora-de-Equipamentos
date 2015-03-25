@@ -26,5 +26,4 @@ public enum Sexo {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-
 }

@@ -2,11 +2,11 @@ package com.datacoper.locacaoequipamentos.common.model.enums;
 
 public enum EstadoCivil {
 
-	SOLTEIRO('1',"Solteiro(a)"),
-	CASADO('2',"Casado(a)"),
-	DIVORCIADO('3',"Divorciado(a)"),
-	VIUVO('4',"Viúvo(a)"),
-	SEPARADO('5',"Separado(a)");
+	S('1',"Solteiro(a)"),
+	C('2',"Casado(a)"),
+	D('3',"Divorciado(a)"),
+	V('4',"Viúvo(a)"),
+	T('5',"Separado(a)");
 	
 	private char idEstadoCivil;
 	private String descricao;

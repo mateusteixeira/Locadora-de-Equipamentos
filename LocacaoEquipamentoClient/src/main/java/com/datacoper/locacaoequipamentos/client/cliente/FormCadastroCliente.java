@@ -1,4 +1,4 @@
-package com.datacoper.locacaoequipamentos.client.cliente;
+	package com.datacoper.locacaoequipamentos.client.cliente;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
@@ -20,7 +20,7 @@ import javax.swing.border.TitledBorder;
 import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoCadastro;
 import com.datacoper.locacaoequipamentos.client.util.ViewMethods;
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
-import com.datacoper.locacaoequipamentos.common.model.Cliente;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 import com.datacoper.locacaoequipamentos.common.model.Endereco;
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
@@ -279,10 +279,10 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 			showMessageDialog(null, e.getMessage(), "Campos Faltantes", ERROR_MESSAGE);
 		}
 
-		Cliente cliente = obterCliente();
+		Pessoa cliente = obterCliente();
 		try {
 			this.clienteService.gravar(cliente);
-			showMessageDialog(null, "Cliente cadastrado com sucesso!", "Cadastro", INFORMATION_MESSAGE);
+			showMessageDialog(null, "Pessoa cadastrado com sucesso!", "Cadastro", INFORMATION_MESSAGE);
 			super.gravar();
 		} catch (BusinessException ex) {
 			showMessageDialog(null, ex.getMessage(), "Erro", ERROR_MESSAGE);
@@ -302,7 +302,7 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 	}
 
 	public void abrirFormBuscaCliente() {
-		//atualizarCliente((Cliente) new FormBuscaCliente().abrirPesquisa());
+		//atualizarCliente((Pessoa) new FormBuscaCliente().abrirPesquisa());
 	}
 
 	@Override
@@ -317,7 +317,7 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 	private void verificaCamposObrigatorios() throws Exception {
 		StringBuilder camposFaltantes = new StringBuilder();
 		if (nomeClienteField.getText().isEmpty())
-			camposFaltantes.append("Nome do Cliente.");
+			camposFaltantes.append("Nome do Pessoa.");
 
 		if (telefoneClienteField.getText().isEmpty())
 			camposFaltantes.append("Telefone.");
@@ -339,10 +339,10 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 
 	}
 
-	private void atualizarCliente(Cliente cliente) {
+	private void atualizarCliente(Pessoa cliente) {
 		ViewMethods.chaveadorCampos(panelEndereco, true);
 		ViewMethods.chaveadorCampos(panelPessoa, true);
-		idClienteField.setText(String.valueOf(cliente.getIdCliente()));
+		/*idClienteField.setText(String.valueOf(cliente.getIdCliente()));
 		cpfClienteField.setText(cliente.getCpf());
 		telefoneClienteField.setText(cliente.getTelefone());
 		nomeClienteField.setText(cliente.getNome());
@@ -364,13 +364,13 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 			DataTemp = new SimpleDateFormat(formato).parse(cliente.getDataNascimento());
 		} catch (ParseException ex) {
 		}
-		nascimentoClienteField.setDate(DataTemp);
+		nascimentoClienteField.setDate(DataTemp);*/
 	}
 
-	private Cliente obterCliente() {
-		Date data = new Date();
+	private Pessoa obterCliente() {
+		/*Date data = new Date();
 		data = nascimentoClienteField.getDate();
-		Cliente cliente = new Cliente();
+		Pessoa cliente = new Pessoa();
 		cliente.setNome(nomeClienteField.getText());
 		cliente.setCpf(cpfClienteField.getText());
 		cliente.setRg(rgClienteField.getText());
@@ -393,7 +393,8 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 			cliente.setIdCliente(Integer.valueOf(idClienteField.getText()));
 		}
 		return cliente;
-
+		 */
+		return null;
 	}
 
 	public void limpaCampos() {
@@ -414,10 +415,10 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 	}
 
 	public void excluir() {
-		Cliente cliente = obterCliente();
+		Pessoa cliente = obterCliente();
 		try {
 			this.clienteService.excluir(cliente);
-			showMessageDialog(null, "Cliente excluído com sucesso!", "Cadastro", INFORMATION_MESSAGE);
+			showMessageDialog(null, "Pessoa excluída com sucesso!", "Cadastro", INFORMATION_MESSAGE);
 			super.excluir();
 		} catch (BusinessException ex) {
 			showMessageDialog(null, ex.getMessage(), "Erro", ERROR_MESSAGE);

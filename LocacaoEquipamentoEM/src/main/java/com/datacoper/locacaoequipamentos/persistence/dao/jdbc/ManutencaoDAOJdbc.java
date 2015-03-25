@@ -5,9 +5,6 @@
  */
 package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
 
-import com.datacoper.locacaoequipamentos.common.model.Manutencao;
-import com.datacoper.locacaoequipamentos.common.model.Maquina;
-import java.sql.ResultSet;
 
 /**
  *

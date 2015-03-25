@@ -2,7 +2,7 @@
 	<persistenceType>jdbc</persistenceType>
 	<daos>
 		<parametersDAO>
-			<classe>com.datacoper.locacaoequipamentos.common.model.Cliente</classe>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Pessoa</classe>
 			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.ClienteDAO</classDao>
 			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.ClienteDAOJpa</classJPA>-->
 			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.ClienteDAOJdbc</classJDBC>

@@ -5,15 +5,9 @@
  */
 package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
 
-import com.datacoper.locacaoequipamentos.common.model.Locacao;
-import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.LocacaoDAO;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.LocacaoDAO;
 
 /**
  *
@@ -35,6 +29,36 @@ public class LocacaoDAOJdbc implements LocacaoDAO{
     
 	@Override
 	public List pesquisar(String filtro, String valorFiltro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void insert(Object object) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(Object object) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Object object) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List pesquisarTodos() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer nextId() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

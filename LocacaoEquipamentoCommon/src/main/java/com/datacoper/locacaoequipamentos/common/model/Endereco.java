@@ -1,81 +1,82 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.datacoper.locacaoequipamentos.common.model;
 
-/**
- *
- * @author Java
- */
 public class Endereco {
-    private String estado;
-    private String cidade;
-    private String rua;
-    private String bairro;
-    private String cep;
-    private int numero;
-    private String complemento;
+	private PessoaPK cdPessoa;
+	private String nrCep;
+	private Cidade idCidade;
+	private String nmBairro;
+	private String nmLogradouro; 
+	private String nrEndereco;
+	private String dsComplemento;
+	
+	public Endereco() {
+		super();
+	}
 
-    public Endereco() {
-    }
+	public Endereco(PessoaPK cdPessoa, String nrCep, Cidade idCidade, String nmBairro, String nmLogradouro, String nrEndereco, String dsComplemento) {
+		super();
+		this.cdPessoa = cdPessoa;
+		this.nrCep = nrCep;
+		this.idCidade = idCidade;
+		this.nmBairro = nmBairro;
+		this.nmLogradouro = nmLogradouro;
+		this.nrEndereco = nrEndereco;
+		this.dsComplemento = dsComplemento;
+	}
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public String getRua() {
-        return rua;
-    }
-
-    public void setRua(String rua) {
-        this.rua = rua;
-    }
-
-    public String getBairro() {
-        return bairro;
-    }
-
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
-
-    public String getComplemento() {
-        return complemento;
-    }
-
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
-    
-    
+	public PessoaPK getCdPessoa() {
+		return cdPessoa;
+	}
+	
+	public void setCdPessoa(PessoaPK cdPessoa) {
+		this.cdPessoa = cdPessoa;
+	}
+	
+	public String getNrCep() {
+		return nrCep;
+	}
+	
+	public void setNrCep(String nrCep) {
+		this.nrCep = nrCep;
+	}
+	
+	public Cidade getIdCidade() {
+		return idCidade;
+	}
+	
+	public void setIdCidade(Cidade idCidade) {
+		this.idCidade = idCidade;
+	}
+	
+	public String getNmBairro() {
+		return nmBairro;
+	}
+	
+	public void setNmBairro(String nmBairro) {
+		this.nmBairro = nmBairro;
+	}
+	
+	public String getNmLogradouro() {
+		return nmLogradouro;
+	}
+	
+	public void setNmLogradouro(String nmLogradouro) {
+		this.nmLogradouro = nmLogradouro;
+	}
+	
+	public String getNrEndereco() {
+		return nrEndereco;
+	}
+	
+	public void setNrEndereco(String nrEndereco) {
+		this.nrEndereco = nrEndereco;
+	}
+	
+	public String getDsComplemento() {
+		return dsComplemento;
+	}
+	
+	public void setDsComplemento(String dsComplemento) {
+		this.dsComplemento = dsComplemento;
+	}
 }

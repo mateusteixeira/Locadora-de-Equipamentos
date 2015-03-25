@@ -5,25 +5,16 @@
  */
 package com.datacoper.locacaoequipamentos.business.service;
 
+import java.util.List;
+
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
-import com.datacoper.locacaoequipamentos.common.model.Cliente;
-import com.datacoper.locacaoequipamentos.common.model.Locacao;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 import com.datacoper.locacaoequipamentos.common.service.ClienteService;
 import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.ClienteDAO;
 import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.DAOFactory;
-import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.LocacaoDAO;
-import com.datacoper.locacaoequipamentos.persistence.dao.jdbc.JdbcDAOFactory;
 import com.datacoper.locacaoequipamentos.persistence.exception.PersistenceException;
 import com.datacoper.locacaoequipamentos.persistence.transaction.ITransaction;
 import com.datacoper.locacaoequipamentos.persistence.transaction.TransactionManagerFactory;
-import com.datacoper.locacaoequipamentos.persistence.transaction.TransactionManagerJdbc;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -41,21 +32,20 @@ public class ClienteServiceImpl implements ClienteService {
 		}
 
 	}
-
+	
 	@Override
-	public void gravar(Cliente cliente) throws BusinessException {
-
-		validarDadosObrigatorios(cliente);
+	public void gravar(Pessoa pessoa) throws BusinessException {
+		validarDadosObrigatorios(pessoa);
 
 		ITransaction transaction = TransactionManagerFactory.getTransaction();
 
 		try {
 			transaction.beginTransaction();
-			if (cliente.getIdCliente() == null) {// update
-				atualizarIDCliente(cliente);
-				clienteDAO.insert(cliente);
+			if (pessoa.getIdPessoa() == null) {// update
+				atualizarIDCliente(pessoa);
+				clienteDAO.insert(pessoa);
 			} else {
-				clienteDAO.update(cliente);
+				clienteDAO.update(pessoa);
 			}
 			transaction.commit();
 
@@ -79,21 +69,24 @@ public class ClienteServiceImpl implements ClienteService {
 
 	}
 
-	private void atualizarIDCliente(Cliente cliente) {
-		Integer idCliente = clienteDAO.nextId();
-		cliente.setIdCliente(idCliente);
+	private void atualizarIDCliente(Pessoa pessoa) throws BusinessException {
+		try{
+			pessoa.setIdPessoa(clienteDAO.nextId());
+		} catch (Exception ex) {
+			throw new BusinessException(ex);
+		}
 	}
 
-	private void validarDadosObrigatorios(Cliente cliente) throws BusinessException {
+	private void validarDadosObrigatorios(Pessoa pessoa) throws BusinessException {
 
 		StringBuilder camposNaoPreenchidos = new StringBuilder();
-		if (cliente.getCpf().matches("(\\d\\d\\.){3}-\\d{2}")) {
+		if (pessoa.getNrCpf().matches("(\\d\\d\\.){3}-\\d{2}")) {
 			camposNaoPreenchidos.append("CPF inválido");
 		}
-		if (cliente.getDataNascimento() == null) {
+		if (pessoa.getDtNascimento() == null) {
 			camposNaoPreenchidos.append("Data Nascimento não preenchido");
 		}
-		// } else if (cliente.getTelefone().contains(" ")) {
+		// } else if (pessoa.getTelefone().contains(" ")) {
 		// throw new
 		// RuntimeException("Por favor, preencha o campo Telefone de forma correta");
 		// }
@@ -104,25 +97,34 @@ public class ClienteServiceImpl implements ClienteService {
 	}
 
 	@Override
-	public List<Cliente> encontrarTodosClientes() {
-		List<Cliente> clientes = clienteDAO.encontrarClienteAll();
+	public List<Pessoa> encontrarTodosClientes() throws BusinessException {
+		List<Pessoa> clientes;
+		try {
+			clientes = clienteDAO.pesquisarTodos();
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 		return clientes;
 	}
 
 	@Override
-	public List<Cliente> pesquisar(String campoPesquisar, String pesquisa) {
-		return clienteDAO.pesquisar(campoPesquisar, pesquisa);
+	public List<Pessoa> pesquisar(String campoPesquisar, String pesquisa) throws BusinessException {
+		try {
+			return clienteDAO.pesquisar(campoPesquisar, pesquisa);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 	}
 
 	@Override
-	public void excluir(Cliente cliente) throws BusinessException {
+	public void excluir(Pessoa pessoa) throws BusinessException {
 
 		ITransaction transaction = TransactionManagerFactory.getTransaction();
 
 		try {
 
 			transaction.beginTransaction();
-			clienteDAO.excluir(cliente);
+			clienteDAO.delete(pessoa.getIdPessoa());
 			transaction.commit();
 
 		} catch (Exception e) {
@@ -146,7 +148,7 @@ public class ClienteServiceImpl implements ClienteService {
 	}
 
 	// @Override
-	// public boolean excluir(Cliente cliente) {
+	// public boolean excluir(Pessoa pessoa) {
 	//
 	// List<Locacao> locacoes;
 	//
@@ -156,22 +158,22 @@ public class ClienteServiceImpl implements ClienteService {
 	// Logger.getLogger(ClienteServiceImpl.class.getName()).log(Level.SEVERE,
 	// null, ex);
 	// throw new
-	// RuntimeException("Problema encontrar locações de cliente para excluir",
+	// RuntimeException("Problema encontrar locações de pessoa para excluir",
 	// ex);
 	// }
 	//
 	// boolean lock = false;
 	// for (Locacao l : locacoes) {
-	// System.out.println("ID Cliente = " + l.getIdCliente());
-	// if (l.getIdCliente() == cliente.getIdCliente()) {
+	// System.out.println("ID Pessoa = " + l.getIdCliente());
+	// if (l.getIdCliente() == pessoa.getIdCliente()) {
 	// lock = true;
 	// }
 	// }
 	// if (lock) {
-	// throw new RuntimeException("Cliente com Locação!");
+	// throw new RuntimeException("Pessoa com Locação!");
 	// } else {
 	//
-	// if (clienteDAO.excluiCliente(cliente)) {
+	// if (clienteDAO.excluiCliente(pessoa)) {
 	// return true;
 	// } else {
 	// return false;
@@ -181,24 +183,24 @@ public class ClienteServiceImpl implements ClienteService {
 	// }
 	//
 	// @Override
-	// public List<Cliente> encontrarTodosClientes() {
+	// public List<Pessoa> encontrarTodosClientes() {
 	// throw new UnsupportedOperationException("Not supported yet."); //To
 	// change body of generated methods, choose Tools | Templates.
 	// }
 	//
 	// @Override
-	// public boolean updateCliente(Cliente cliente) {
-	// if (cliente.getCpf().contains(" ")) {
+	// public boolean updateCliente(Pessoa pessoa) {
+	// if (pessoa.getCpf().contains(" ")) {
 	// throw new RuntimeException("Por favor preencha CPF corretamenta");
-	// } else if (cliente.getDataNascimento() == null) {
+	// } else if (pessoa.getDataNascimento() == null) {
 	// throw new
 	// RuntimeException("Por favor, preencha o campo Data de Nascimento de forma correta");
-	// } else if (cliente.getTelefone().contains(" ")) {
+	// } else if (pessoa.getTelefone().contains(" ")) {
 	// throw new
 	// RuntimeException("Por favor, preencha o campo Telefone de forma correta");
 	// }
 	//
-	// if (clienteDAO.updateCliente(cliente)) {
+	// if (clienteDAO.updateCliente(pessoa)) {
 	// return true;
 	// } else {
 	// return false;
@@ -221,8 +223,8 @@ public class ClienteServiceImpl implements ClienteService {
 	// }
 	//
 	// @Override
-	// public List<Cliente> buscaClienteAll(int ordem, int ascDesc) {
-	// List<Cliente> lista;
+	// public List<Pessoa> buscaClienteAll(int ordem, int ascDesc) {
+	// List<Pessoa> lista;
 	//
 	// lista = clienteDAO.buscaAll(ordem, ascDesc);
 	//
@@ -230,10 +232,10 @@ public class ClienteServiceImpl implements ClienteService {
 	// }
 	//
 	// @Override
-	// public List<Cliente> buscaClienteEsp(int ordem, int ascDesc, int id,
+	// public List<Pessoa> buscaClienteEsp(int ordem, int ascDesc, int id,
 	// String cont) {
 	//
-	// List<Cliente> lista;
+	// List<Pessoa> lista;
 	//
 	// lista = clienteDAO.buscaEsp(ordem, ascDesc, id, cont);
 	//

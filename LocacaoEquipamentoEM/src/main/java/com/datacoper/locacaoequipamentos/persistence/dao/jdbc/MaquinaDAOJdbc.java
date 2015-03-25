@@ -5,21 +5,13 @@
  */
 package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
 
-import com.datacoper.locacaoequipamentos.common.model.Maquina;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Java
  */
 public class MaquinaDAOJdbc {
-
+/*
     Connection conectar;
     static final String id = "id";
     static final String marca = "marca";
@@ -217,6 +209,6 @@ public class MaquinaDAOJdbc {
 //
 //            return false;
 //        }
-//    }
+//    }*/
 
 }

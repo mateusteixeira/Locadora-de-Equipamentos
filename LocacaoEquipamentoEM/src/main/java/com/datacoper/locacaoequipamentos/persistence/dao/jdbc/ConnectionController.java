@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 public class ConnectionController {
 	
-	private final String BASE   = "LocadoraDeEquipamentos";
+	private final String BASE   = "business";
 	private final String SERVER = "localhost";
 	private final String PORT   = "5432";
 	private final String USER   = "postgres";

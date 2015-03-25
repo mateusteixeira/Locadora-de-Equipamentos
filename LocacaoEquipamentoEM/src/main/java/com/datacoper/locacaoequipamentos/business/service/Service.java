@@ -24,6 +24,11 @@ public abstract class Service implements com.datacoper.locacaoequipamentos.commo
 
 	@Override
 	public <T> List<T> pesquisar(String filtro, String valorFiltro) {
-		return dao.pesquisar(filtro, valorFiltro);
+		try {
+			return dao.pesquisar(filtro, valorFiltro);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

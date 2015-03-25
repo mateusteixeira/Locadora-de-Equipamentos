@@ -27,9 +27,10 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import static javax.swing.JOptionPane.*;
 
-import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTable;
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTablePesquisa;
+import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 import com.datacoper.locacaoequipamentos.common.service.Service;
 import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
 
@@ -93,7 +94,7 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
 		panelCampos.add(comboBox, gbc_comboBox);
-		comboBox.addItem("TEste");
+		comboBox.addItem("Teste");
 
 		FieldPesquisa = new JTextField();
 
@@ -135,7 +136,7 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		scrollPane.setBorder(new TitledBorder(null, "Pesquisa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelTable.add(scrollPane);
 
-		table = new JTable(new MyModelTablePesquisa<T>(pesquisar()));
+		table = new JTable(new MyModelTablePesquisa<T>(classPesquisa, pesquisar()));
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -188,14 +189,18 @@ public class FormPadraoPesquisa<T> extends JDialog {
 	}
 
 	public T getSelectedRow(int selectedRow) {
-
-		return (T) ((MyModelTable) table.getModel()).get(selectedRow);
+		return ((MyModelTablePesquisa<T>)table.getModel()).get(selectedRow);
 	}
 
 	//public abstract TableModel getTableModel(List lista);
 
 	public List<T> pesquisar() {
-		return service.pesquisar(comboBox.getSelectedItem().toString(), FieldPesquisa.getText());
+		try {
+			return service.pesquisar(comboBox.getSelectedItem().toString(), FieldPesquisa.getText());
+		} catch (BusinessException e) {
+			showMessageDialog(null, "Erro", e.getMessage(), ERROR_MESSAGE);
+		}
+		return null;
 	}
 
 	public T abrirPesquisa() {

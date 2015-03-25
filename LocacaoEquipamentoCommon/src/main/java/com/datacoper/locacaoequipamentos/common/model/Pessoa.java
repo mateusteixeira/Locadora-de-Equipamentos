@@ -1,116 +1,126 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.datacoper.locacaoequipamentos.common.model;
+
+import java.util.Date;
+import java.util.List;
 
 import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
 
-/**
- *
- * @author Java
- */
 
 public class Pessoa {
+	@ColumnTableSearch(header="Codigo", width=70)
+	private Integer idPessoa;
 	@ColumnTableSearch(header="Nome", width=200)
-	private String nome;
-	private String rg;
-	@ColumnTableSearch(header="CPF", width=120)
-	private String cpf;
-	private EstadoCivil estadoCivil;
+	private String nmPessoa;
+	@ColumnTableSearch(header="CPF", width=100)
+	private String nrCpf;
+	private String nrRg;
+	private Date dtNascimento;
 	private Sexo sexo;
-	private String email;
+	private EstadoCivil idEstadoCivil;
+	private RelacaoPessoa idRelacaoPessoa;
 	@ColumnTableSearch(header="Telefone", width=80)
-	private String telefone;
-	private String dataNascimento;
-	private String dataCadastro;
-	private Endereco endereco;
-
+	private String nrTelefone;
+	
+	private List<Endereco> enderecos;
+	
 	public Pessoa() {
-
+		super();
 	}
 
-	public String getNome() {
-		return nome;
+	public Pessoa(Integer idPessoa, String nmPessoa, String nrCpf, String nrRg, Date dtNascimento, Sexo sexo, EstadoCivil idEstadoCivil,
+			RelacaoPessoa idRelacaoPessoa, String nrTelefone, List<Endereco> enderecos) {
+		super();
+		this.idPessoa = idPessoa;
+		this.nmPessoa = nmPessoa;
+		this.nrCpf = nrCpf;
+		this.nrRg = nrRg;
+		this.dtNascimento = dtNascimento;
+		this.sexo = sexo;
+		this.idEstadoCivil = idEstadoCivil;
+		this.idRelacaoPessoa = idRelacaoPessoa;
+		this.nrTelefone = nrTelefone;
+		this.enderecos = enderecos;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public Integer getIdPessoa() {
+		return idPessoa;
 	}
-
-	public String getRg() {
-		return rg;
+	
+	public void setIdPessoa(Integer idPessoa) {
+		this.idPessoa = idPessoa;
 	}
-
-	public void setRg(String rg) {
-		this.rg = rg;
+	
+	public String getNmPessoa() {
+		return nmPessoa;
 	}
-
-	public String getCpf() {
-		return cpf;
+	
+	public void setNmPessoa(String nmPessoa) {
+		this.nmPessoa = nmPessoa;
 	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	
+	public String getNrCpf() {
+		return nrCpf;
 	}
-
-	public EstadoCivil getEstadoCivil() {
-		return estadoCivil;
+	
+	public void setNrCpf(String nrCpf) {
+		this.nrCpf = nrCpf;
 	}
-
-	public void setEstadoCivil(EstadoCivil estadoCivil) {
-		this.estadoCivil = estadoCivil;
+	
+	public String getNrRg() {
+		return nrRg;
 	}
-
+	
+	public void setNrRg(String nrRg) {
+		this.nrRg = nrRg;
+	}
+	
+	public Date getDtNascimento() {
+		return dtNascimento;
+	}
+	
+	public void setDtNascimento(Date dt_nascimento) {
+		this.dtNascimento = dt_nascimento;
+	}
+	
 	public Sexo getSexo() {
 		return sexo;
 	}
-
+	
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
 	}
-
-	public String getEmail() {
-		return email;
+	
+	public EstadoCivil getIdEstadoCivil() {
+		return idEstadoCivil;
+	}
+	
+	public void setIdEstadoCivil(EstadoCivil idEstadoCivil) {
+		this.idEstadoCivil = idEstadoCivil;
+	}
+	
+	public RelacaoPessoa getIdRelacaoPessoa() {
+		return idRelacaoPessoa;
+	}
+	
+	public void setIdRelacaoPessoa(RelacaoPessoa idRelacaoPessoa) {
+		this.idRelacaoPessoa = idRelacaoPessoa;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public String getNrTelefone() {
+		return nrTelefone;
 	}
 
-	public String getTelefone() {
-		return telefone;
+	public void setNrTelefone(String nrTelefone) {
+		this.nrTelefone = nrTelefone;
 	}
 
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
+	public List<Endereco> getEnderecos() {
+		return enderecos;
 	}
 
-	public String getDataNascimento() {
-		return dataNascimento;
+	public void setEnderecos(List<Endereco> enderecos) {
+		this.enderecos = enderecos;
 	}
-
-	public void setDataNascimento(String dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
-
-	public String getDataCadastro() {
-		return dataCadastro;
-	}
-
-	public void setDataCadastro(String dataCadastro) {
-		this.dataCadastro = dataCadastro;
-	}
-
-	public Endereco getEndereco() {
-		return endereco;
-	}
-
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
-	}
-
 }

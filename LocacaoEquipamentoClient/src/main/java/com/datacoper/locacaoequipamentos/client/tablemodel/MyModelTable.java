@@ -56,7 +56,10 @@ public abstract class MyModelTable<T extends Object> extends AbstractTableModel 
 	}
 
 	public T get(int row) {
-		return valores.get(row);
+		if (row > -1) {
+			return valores.get(row);
+		}
+		return null;
 	}
 
 	public abstract Object getValorObjeto(T objeto, int idColuna);

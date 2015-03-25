@@ -6,8 +6,9 @@ import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
+
+import com.datacoper.locacaoequipamentos.persistence.dbutil.MyBeanHandler;
+import com.datacoper.locacaoequipamentos.persistence.dbutil.MyBeanListHandler;
 
 public class GenericDAOJdbc {
 
@@ -26,7 +27,7 @@ public class GenericDAOJdbc {
 
 	protected <T> T getSingleResult(String sql, Class<T> returnType) {
 		
-		BeanHandler<T> resultHandler = new BeanHandler<T>(returnType);
+		MyBeanHandler<T> resultHandler = new MyBeanHandler<T>(returnType);
 		
 		T result = executeQuery(sql, resultHandler);
 		
@@ -35,7 +36,7 @@ public class GenericDAOJdbc {
 
 	
 	protected <T> List<T> getResult(String sql, Class<T> returnType) {
-		BeanListHandler<T> resultHandler = new BeanListHandler<T>(returnType);
+		MyBeanListHandler<T> resultHandler = new MyBeanListHandler<T>(returnType);
 		
 		List<T> result = executeQuery(sql, resultHandler);
 		
@@ -43,6 +44,7 @@ public class GenericDAOJdbc {
 	}
 	
 	private <T> T executeQuery(String sql, ResultSetHandler<T> resultHandler) {
+		System.out.println(sql);
 		QueryRunner queryRunner = new QueryRunner();
 		T result;
 		try {

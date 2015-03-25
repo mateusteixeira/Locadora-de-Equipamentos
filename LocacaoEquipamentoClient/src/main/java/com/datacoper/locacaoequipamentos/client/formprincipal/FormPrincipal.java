@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JDesktopPane;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
@@ -21,7 +20,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.datacoper.locacaoequipamentos.client.cliente.FormCadastroCliente;
 import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoPesquisa;
-import com.datacoper.locacaoequipamentos.common.model.Cliente;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 
 public class FormPrincipal extends JFrame {
 
@@ -105,7 +104,7 @@ public class FormPrincipal extends JFrame {
 		JMenuItem mntmClientes = new JMenuItem("Clientes");
 		mntmClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abreTelaPesquisa(new FormPadraoPesquisa<Cliente>(Cliente.class));
+				abreTelaPesquisa(new FormPadraoPesquisa<Pessoa>(Pessoa.class));
 			}
 		});
 		mnConsultas.add(mntmClientes);

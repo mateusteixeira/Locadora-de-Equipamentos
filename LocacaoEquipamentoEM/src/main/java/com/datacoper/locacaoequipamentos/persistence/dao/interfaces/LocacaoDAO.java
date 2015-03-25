@@ -5,8 +5,6 @@
  */
 package com.datacoper.locacaoequipamentos.persistence.dao.interfaces;
 
-import com.datacoper.locacaoequipamentos.common.model.Locacao;
-import java.util.List;
 
 /**
  *

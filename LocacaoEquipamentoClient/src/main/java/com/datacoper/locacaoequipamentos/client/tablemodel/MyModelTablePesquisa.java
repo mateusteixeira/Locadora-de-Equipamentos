@@ -2,89 +2,63 @@ package com.datacoper.locacaoequipamentos.client.tablemodel;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
+import com.dc.locacaoequipamentocommon.util.ReflectionUtils;
 
 public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
 	private List<T> valores;
 	private List<Coluna> colunas;
+	private Class classePesquisa;
 
 	// Esse é um construtor, que recebe a nossa lista de objetos
-	public MyModelTablePesquisa(List<T> valores) {
-		this.valores = new ArrayList<T>(valores);
+	public MyModelTablePesquisa(Class<T> classePesquisa, List<T> valores) {
+		this.classePesquisa = classePesquisa;
+		this.valores = valores;
+		colunas = new LinkedList<>();
+		List<Field> fields = ReflectionUtils.fieldByAnnotation(classePesquisa, (Class<? extends Annotation>) ColumnTableSearch.class);
 
-		List<Annotation> c = annotationByAnnotation(valores.get(0).getClass(), (Class<? extends Annotation>) ColumnTableSearch.class);
-		//colunas.add(new Coluna(f.getName(), a.header(), a.width()));
-	}
-
-	public List<Field> fieldByAnnotation(Class<?> classe, Class<? extends Annotation> annotation) {
-		List<Field> fields = new LinkedList<Field>();
-		if (classe.getSuperclass() != null) {
-			fields.addAll(fieldByAnnotation(classe.getSuperclass(), annotation));
+		for (Field f : fields) {
+			ColumnTableSearch a = f.getAnnotation(ColumnTableSearch.class);
+			colunas.add(new Coluna(f.getName(), a.header(), a.width()));
 		}
-
-		Class c = valores.get(0).getClass();
-
-		for (Field f : c.getDeclaredFields()) {
-			if (f.isAnnotationPresent(annotation)) {
-				fields.add(f);
-			}
-		}
-
-		return fields;
-	}
-
-	public List<Annotation> annotationByAnnotation(Class<?> classe, Class<? extends Annotation> annotation) {
-		List<Annotation> lista = new LinkedList<>();
-
-		for (Field f : fieldByAnnotation(classe, annotation)) {
-			lista.add(f.getAnnotation(annotation));
-		}
-
-		return lista;
-
 	}
 
 	public int getRowCount() {
 		// Quantas linhas tem.
-		return valores.size();
+		if (valores != null && !valores.isEmpty()) {
+			return valores.size();
+		} else {
+			return 0;
+		}
 	}
 
 	public int getColumnCount() {
 		// Quantas colunas tem.
-		return colunas.size();
+		if (colunas != null && !colunas.isEmpty()) {
+			return colunas.size();
+		}
+		return 0;
 	}
 
 	public String getColumnName(int column) {
 		// nome das das colunas
 		return colunas.get(column).getHeader();
 	}
-
+	
 	public Object getValueAt(int row, int column) {
 		String label = colunas.get(column).getNomeFisico();
 
-		Object o = null;
 		try {
-			Field f = valores.get(row).getClass().getClass().getField(label);
-			f.setAccessible(true);
-			o = f.get(valores.get(row));
-			f.setAccessible(false);
-		} catch (NoSuchFieldException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return ReflectionUtils.getValueField(classePesquisa, label, valores.get(row));
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		return o;
+		return null;
 	}
 
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -106,7 +80,11 @@ public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
 	}
 
 	public T get(int row) {
-		return valores.get(row);
+		if (row > -1) {
+			return valores.get(row);
+		}
+
+		return null;
 	}
 
 	protected class Coluna {

@@ -1,15 +1,13 @@
 package com.datacoper.locacaoequipamentos.vohandler;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.datacoper.locacaoequipamentos.common.model.Cliente;
-import com.datacoper.locacaoequipamentos.common.model.Endereco;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 import com.dc.locacaoequipamentocommon.vo.ClienteEnderecoVO;
 
 public class ClienteEnderecoHandler {
-
-	public static List<Cliente> getMultipleResult(List<ClienteEnderecoVO> lista) {
+	/*
+	public static List<Pessoa> getMultipleResult(List<ClienteEnderecoVO> lista) {
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		for (ClienteEnderecoVO clienteEnderecoVO : lista) {
 			Cliente cliente = new Cliente();
@@ -63,5 +61,5 @@ public class ClienteEnderecoHandler {
 
 		return cliente;
 	}
-
+*/
 }
