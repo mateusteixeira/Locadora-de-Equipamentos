@@ -1,6 +1,7 @@
 package com.datacoper.locacaoequipamentos.client.formprincipal;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.datacoper.locacaoequipamentos.client.cliente.FormCadastroCliente;
+import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoCadastro;
 import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoPesquisa;
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 
@@ -53,12 +55,15 @@ public class FormPrincipal extends JFrame {
 	}
 	
 	public void initComponents() {
+		setExtendedState(MAXIMIZED_BOTH);
+		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			JOptionPane.showMessageDialog(null, "NÃ£o foi possÃ­vel carregar o \"Skin\" padrÃ£o. Definindo o padrÃ£o original.", "Erro",
 					JOptionPane.ERROR_MESSAGE);
 		}
+		
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 484);
@@ -78,22 +83,12 @@ public class FormPrincipal extends JFrame {
 		desktopPane.setBorder(null);
 		desktopPane.setBackground(SystemColor.control);
 		contentPane.add(desktopPane);
+		desktopPane.setBackground(Color.GRAY);
 
 		JMenuItem mntmNewMenuItem = new JMenuItem("Clientes");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JInternalFrame ji = new FormCadastroCliente();
-				ji.setVisible(false);
-				desktopPane.add(ji);
-
-				try {
-					ji.setMaximum(true);
-				} catch (PropertyVetoException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				ji.setVisible(true);
-
+				abreTela(new FormCadastroCliente());
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem);
@@ -104,20 +99,26 @@ public class FormPrincipal extends JFrame {
 		JMenuItem mntmClientes = new JMenuItem("Clientes");
 		mntmClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abreTelaPesquisa(new FormPadraoPesquisa<Pessoa>(Pessoa.class));
+				abreTelaPesquisa(FormCadastroCliente.class, new FormPadraoPesquisa<Pessoa>(Pessoa.class));
 			}
 		});
 		mnConsultas.add(mntmClientes);
 	}
 	
-	private void abreTela(JInternalFrame ji) {
-		((FormCadastroCliente) ji).abrirFormBuscaCliente();
-		((FormCadastroCliente) ji).habilitarCampos();
-		ji.setVisible(false);
+	public void abreTela(JInternalFrame ji) {
 		desktopPane.add(ji);
+		ji.setSize(600, 400);
+		ji.setVisible(true);
 	}
 	
-	private <T> void abreTelaPesquisa(FormPadraoPesquisa<T> form) {
-		form.abrirPesquisa();
+	private <T> void abreTelaPesquisa(Class<?> cad, FormPadraoPesquisa<Pessoa> formPadraoPesquisa) {
+		Object o = formPadraoPesquisa.abrirPesquisa();
+		if (o != null) {
+			try {
+				abreTela((JInternalFrame) cad.getConstructor(Pessoa.class).newInstance(o));
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 }

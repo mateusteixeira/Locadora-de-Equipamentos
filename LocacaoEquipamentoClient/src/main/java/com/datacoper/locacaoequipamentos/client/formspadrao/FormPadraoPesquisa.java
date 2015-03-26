@@ -16,9 +16,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -32,6 +38,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTablePesquisa;
+import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
 import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaService;
@@ -41,21 +48,28 @@ public class FormPadraoPesquisa<T> extends JDialog {
 	private PesquisaService service;
 	private String[] filtros;
 	private Class<T> classPesquisa;
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public FormPadraoPesquisa(Class<T> classPesquisa) {
-		this(ServiceLocator.loadService(PesquisaService.class, classPesquisa), classPesquisa);
+//		try {
+//			Class<?> servico = Class.forName("com.datacoper.locacaoequipamentos.business.servicesimpl.PesquisaServiceImpl");
+//			servico.getConstructor(Class.class).newInstance(classPesquisa);
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+
+		 this(ServiceLocator.loadService(PesquisaService.class, new Class[]{Class.class}, new Object[]{classPesquisa}), classPesquisa);
 	}
-	
+
 	public FormPadraoPesquisa(PesquisaService service, Class<T> classPesquisa) {
 		this.classPesquisa = classPesquisa;
 		this.service = service;
-		
+
 		initComponents();
 	}
-	
+
 	private void initComponents() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -86,7 +100,7 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		gbc_lblPesquisarPor.gridx = 0;
 		gbc_lblPesquisarPor.gridy = 0;
 		panelCampos.add(lblPesquisarPor, gbc_lblPesquisarPor);
-		
+
 		comboBox = new JComboBox();
 		comboBox.setPreferredSize(new Dimension(200, 20));
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
@@ -96,7 +110,7 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
 		panelCampos.add(comboBox, gbc_comboBox);
-		comboBox.addItem("Teste");
+		comboBox.setModel(getFiltersModel());
 
 		FieldPesquisa = new JTextField();
 
@@ -143,7 +157,6 @@ public class FormPadraoPesquisa<T> extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					getSelectedRow(table.getSelectedRow());
 					dispose();
 				}
 			}
@@ -163,7 +176,7 @@ public class FormPadraoPesquisa<T> extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				String pesquisa = FieldPesquisa.getText();
 
-				//table.setModel((getTableModel(pesquisar(pesquisa))));
+				// table.setModel((getTableModel(pesquisar(pesquisa))));
 				table.revalidate();
 				table.repaint();
 			}
@@ -172,6 +185,23 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setModal(true);
+	}
+
+	private ComboBoxModel<List<Filtros>> getFiltersModel() {
+		List<Filtros> filtros = new LinkedList<>();
+
+		for (Field f : classPesquisa.getDeclaredFields()) {
+			if (f.isAnnotationPresent(ColumnTableSearch.class)) {
+				ColumnTableSearch columnTableSearch = f.getAnnotation(ColumnTableSearch.class);
+				if (columnTableSearch.isFilter()) {
+					String header = columnTableSearch.FilterTitle();
+					header = header.equals("") ? columnTableSearch.header() : header;
+					filtros.add(new Filtros(header, f.getName()));
+				}
+			}
+		}
+
+		return new DefaultComboBoxModel(filtros.toArray());
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -191,10 +221,10 @@ public class FormPadraoPesquisa<T> extends JDialog {
 	}
 
 	public T getSelectedRow(int selectedRow) {
-		return ((MyModelTablePesquisa<T>)table.getModel()).get(selectedRow);
+		return ((MyModelTablePesquisa<T>) table.getModel()).get(selectedRow);
 	}
 
-	//public abstract TableModel getTableModel(List lista);
+	// public abstract TableModel getTableModel(List lista);
 
 	public List<T> pesquisar() {
 		try {
@@ -208,5 +238,37 @@ public class FormPadraoPesquisa<T> extends JDialog {
 	public T abrirPesquisa() {
 		setVisible(true);
 		return getSelectedRow(table.getSelectedRow());
+	}
+	
+	public class Filtros {
+		private String header;
+		private String coluna;
+		
+		public Filtros(String header, String coluna) {
+			super();
+			this.header = header;
+			this.coluna = coluna;
+		}
+
+		public String getHeader() {
+			return header;
+		}
+		
+		public void setHeader(String header) {
+			this.header = header;
+		}
+		
+		public String getColuna() {
+			return coluna;
+		}
+		
+		public void setColuna(String coluna) {
+			this.coluna = coluna;
+		}
+		
+		@Override
+		public String toString() {
+			return header;
+		}
 	}
 }

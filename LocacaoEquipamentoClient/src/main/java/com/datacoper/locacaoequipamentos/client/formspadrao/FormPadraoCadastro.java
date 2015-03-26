@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import com.datacoper.locacaoequipamentos.client.cliente.FormCadastroCliente;
 import com.datacoper.locacaoequipamentos.client.util.ViewMethods;
 
-public abstract class FormPadraoCadastro extends JInternalFrame {
+public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	protected JPanel panelDados;
@@ -24,13 +24,22 @@ public abstract class FormPadraoCadastro extends JInternalFrame {
 	private JButton btnLocalizar;
 	private JButton btnLimpar;
 	private JButton btnExcluir;
-
-	public FormPadraoCadastro() {
-
+	
+	protected T object;
+	
+	public FormPadraoCadastro(T object) {
 		initComponents();
+		
+		this.object = object;
 	}
+	
+	
+	
+	public abstract void carregarTela(T obj);
 
 	protected void initComponents() {
+		setClosable(true);
+		setResizable(false);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
 		panelDados = new JPanel();

@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
+import com.datacoper.locacaoequipamentos.common.model.enums.Comparador;
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
 
@@ -32,30 +34,41 @@ public class Pessoa implements Serializable {
 
 	@Id
 	@Column(name = "id_pessoa")
-	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pessoa_id_seq")
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pessoa_id_pessoa_seq")
+	@ColumnTableSearch(header = "Código", index = 1)
 	private Integer idPessoa;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dt_nascimento")
 	private Date dtNascimento;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_cadastro")
+	private Date dtCadastro;
 
 	@Column(name = "id_estado_civil")
 	@Enumerated(EnumType.ORDINAL)
 	private EstadoCivil idEstadoCivil;
 
 	@Column(name = "nm_pessoa")
+	@ColumnTableSearch(header = "Nome", index = 2, comparador=Comparador.LIKE)
 	private String nmPessoa;
 
 	@Column(name = "nr_cpf")
+	@ColumnTableSearch(header = "CPF", index = 3, comparador=Comparador.LIKE)
 	private String nrCpf;
 
 	@Column(name = "nr_rg")
 	private String nrRg;
 
 	@Column(name = "nr_telefone")
+	@ColumnTableSearch(header = "Telefone", index = 4)
 	private String nrTelefone;
 	@Enumerated(EnumType.ORDINAL)
 	private Sexo sexo;
+	
+	@Column(name = "ds_email")
+	private String dsEmail;
 
 	// bi-directional many-to-one association to Endereco
 	@OneToMany(mappedBy = "pessoa")
@@ -128,6 +141,14 @@ public class Pessoa implements Serializable {
 		this.nrCpf = nrCpf;
 	}
 
+	public Date getDtCadastro() {
+		return dtCadastro;
+	}
+
+	public void setDtCadastro(Date dtCadastro) {
+		this.dtCadastro = dtCadastro;
+	}
+
 	public String getNrRg() {
 		return this.nrRg;
 	}
@@ -167,6 +188,18 @@ public class Pessoa implements Serializable {
 		return endereco;
 	}
 
+	public String getDsEmail() {
+		return dsEmail;
+	}
+
+	public void setDsEmail(String dsEmail) {
+		this.dsEmail = dsEmail;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public Endereco removeEndereco(Endereco endereco) {
 		getEnderecos().remove(endereco);
 		endereco.setPessoa(null);
@@ -182,4 +215,8 @@ public class Pessoa implements Serializable {
 		this.relacaoPessoa = relacaoPessoa;
 	}
 
+	@Override
+	public String toString() {
+		return nmPessoa;
+	}
 }

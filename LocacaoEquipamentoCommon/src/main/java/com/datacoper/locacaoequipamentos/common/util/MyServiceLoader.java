@@ -19,6 +19,11 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.ServiceConfigurationError;
 
+import jdk.nashorn.internal.ir.ForNode;
+
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
+import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaService;
+
 public final class MyServiceLoader<S> implements Iterable<S> {
 
     private static final String PREFIX = "META-INF/services/";
@@ -34,6 +39,8 @@ public final class MyServiceLoader<S> implements Iterable<S> {
     private LazyIterator lookupIterator;
     
     private static Object[] paramsConstruct;
+    
+    private static Class[] paramsConstructType;
 
   
     public void reload() {
@@ -176,15 +183,14 @@ public final class MyServiceLoader<S> implements Iterable<S> {
                 fail(service,
                      "Provider " + cn  + " not a subtype");
             }
+            
+            Object[] o = paramsConstructType;
+            Object[] o1 = paramsConstruct;
+            
             try {
-            	Class<?>[] lista = new Class[paramsConstruct.length];
-            	for (int i = 0; i < lista.length; i++) {
-            		lista[i] = (Class<?>) paramsConstruct[i].getClass();
-            	}
-            	
             	S p = null;
             	if (paramsConstruct.length > 0) {
-            		p = service.cast(c.getConstructor(lista).newInstance(paramsConstruct));
+            		p = service.cast(c.getConstructor(paramsConstructType).newInstance(paramsConstruct));
             	} else {
             		p = service.cast(c.newInstance());
             	}
@@ -263,8 +269,10 @@ public final class MyServiceLoader<S> implements Iterable<S> {
         return MyServiceLoader.load(service, cl);
     }
     
-    public static <S> MyServiceLoader<S> load(Class<S> service, Object... paramsConstruct) {
+    public static <S> MyServiceLoader<S> load(Class<S> service, Class[] paramsConstructType, Object[] paramsConstruct) {
     	MyServiceLoader.paramsConstruct = paramsConstruct;
+    	MyServiceLoader.paramsConstructType = paramsConstructType;
+    	
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return MyServiceLoader.load(service, cl);
     } 

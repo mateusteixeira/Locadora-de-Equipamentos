@@ -11,13 +11,6 @@
  		<class>com.datacoper.locacaoequipamentos.common.model.Pais</class>
 		<class>com.datacoper.locacaoequipamentos.common.model.Pessoa</class>
 		<class>com.datacoper.locacaoequipamentos.common.model.RelacaoPessoa</class>
-		<class>model.Cidade</class>
-		<class>model.Endereco</class>
-		<class>model.EnderecoPK</class>
-		<class>model.Estado</class>
-		<class>model.Pai</class>
-		<class>model.Pessoa</class>
-		<class>model.RelacaoPessoa</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/business" />

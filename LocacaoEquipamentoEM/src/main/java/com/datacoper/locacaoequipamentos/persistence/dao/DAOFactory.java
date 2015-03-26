@@ -6,7 +6,6 @@ package com.datacoper.locacaoequipamentos.persistence.dao;
  * and open the template in the editor.
  */
 
-
 import com.datacoper.locacaoequipamentos.persistence.connections.ConnectionController;
 import com.datacoper.locacaoequipamentos.persistence.connections.JPAUtil;
 import com.datacoper.locacaoequipamentos.persistence.parameters.ParametersDAO;
@@ -23,9 +22,13 @@ public abstract class DAOFactory {
 	private static final String PERSISTENCE_TYPE = ParametersLoader.getPersistenceType();
 
 	public static <T> T getInstance(Class<T> classDAO) throws Exception {
+		return (T) getInstance(ParametersLoader.getParamderByClass(classDAO).getClassDao(),ParametersLoader.getParamderByClass(classDAO).getClasse());
+	}
+	
+	public static <T> T getInstance(Class<T> classDAO, Class<?> entityClass) throws Exception {
 		try {
 			connection = getConnection();
-			return (T) getClassDaoForInstantiate(classDAO).getConstructor(connection.getClass()).newInstance(connection);
+			return (T) getClassDaoForInstantiate(classDAO).getConstructor(Class.class).newInstance(entityClass);
 		} catch (Exception e) {
 			throw new Exception("Erro ao instanciar DAO\n" + e.getMessage());
 		}

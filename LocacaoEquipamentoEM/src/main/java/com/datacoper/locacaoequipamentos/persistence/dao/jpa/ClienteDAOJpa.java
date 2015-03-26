@@ -15,8 +15,8 @@ public class ClienteDAOJpa extends AbstractDAOJPA<Pessoa, Integer> implements Cl
 	}
 
 	@Override
-	public List<Pessoa> search(String filtro, String valorFiltro) throws Exception {
-		
+	public List<Pessoa> search(String filtro, String valorFiltro, Class<Pessoa> classe) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

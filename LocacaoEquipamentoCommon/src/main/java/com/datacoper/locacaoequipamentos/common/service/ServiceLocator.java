@@ -17,13 +17,13 @@ import com.datacoper.locacaoequipamentos.common.util.MyServiceLoader;
 public abstract class ServiceLocator {
     
 	public static <T> T loadService(Class<T> interfaceServico) {
-		return loadService(interfaceServico, null);
+		return loadService(interfaceServico, null, null);
 	}
 	
     
-    public static <T> T loadService(Class<T> interfaceServico, Object paramtersConstruct) {
+    public static <T> T loadService(Class<T> interfaceServico, Class[] paramsConstructType, Object[] paramtersConstruct) {
         T service = null;
-        MyServiceLoader serviceLoader =  MyServiceLoader.load(interfaceServico, paramtersConstruct);
+        MyServiceLoader serviceLoader =  MyServiceLoader.load(interfaceServico, paramsConstructType, paramtersConstruct);
         Iterator<T> iterator = serviceLoader.iterator();
         if (iterator.hasNext()) 
             service = iterator.next();

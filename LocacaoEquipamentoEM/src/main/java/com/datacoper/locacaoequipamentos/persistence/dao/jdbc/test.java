@@ -10,9 +10,9 @@ import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
 public class test {
 
 	public static void main(String[] args) {
-		Pessoa pessoa = new Pessoa(10,new Date(), EstadoCivil.C,"joao","01010201010","09230913923","093290332",Sexo.MASCULINO,null,new RelacaoPessoa(1));
+		Pessoa pessoa = new Pessoa(null,new Date(), EstadoCivil.C,"cesar","01010201010","09230913923","093290332",Sexo.FEMININO,null,new RelacaoPessoa(1));
 		try {
-			new ClienteDAOJdbc().insert(pessoa);
+			new ClienteDAOJdbc(Pessoa.class).insert(pessoa);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

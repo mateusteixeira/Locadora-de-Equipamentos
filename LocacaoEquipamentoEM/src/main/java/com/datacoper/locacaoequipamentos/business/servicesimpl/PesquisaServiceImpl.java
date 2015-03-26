@@ -6,16 +6,17 @@ import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaServi
 import com.datacoper.locacaoequipamentos.persistence.dao.DAO;
 import com.datacoper.locacaoequipamentos.persistence.dao.DAOFactory;
 
-public abstract class PesquisaServiceImpl implements PesquisaService {
+public  class PesquisaServiceImpl implements PesquisaService {
 	protected Class<?> classePesquisa;
 	private static DAO dao;
-
-	public PesquisaServiceImpl(Class<?> classe) {
-		this.classePesquisa = classe;
+	
+	public PesquisaServiceImpl(Class classePesquisa) {
+		super();
+		this.classePesquisa = classePesquisa;
 
 		if (dao == null) {
 			try {
-				dao = (DAO) DAOFactory.getInstance(classe);
+				dao = (DAO) DAOFactory.getInstance(classePesquisa);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -25,7 +26,7 @@ public abstract class PesquisaServiceImpl implements PesquisaService {
 	@Override
 	public <T> List<T> pesquisar(String filtro, String valorFiltro) {
 		try {
-			return dao.search(filtro, valorFiltro);
+			return dao.search(filtro, valorFiltro, classePesquisa);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

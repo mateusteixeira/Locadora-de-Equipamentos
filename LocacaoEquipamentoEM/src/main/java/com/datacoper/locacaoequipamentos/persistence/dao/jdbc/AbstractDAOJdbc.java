@@ -1,6 +1,7 @@
 package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
 
 import java.beans.Transient;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,24 +18,39 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.eclipse.persistence.internal.sessions.remote.SequencingFunctionCall.GetNextValue;
+
+import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
+import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
+import com.datacoper.locacaoequipamentos.common.model.enums.Comparador;
 import com.datacoper.locacaoequipamentos.common.util.ReflectionUtils;
 import com.datacoper.locacaoequipamentos.persistence.connections.ConnectionController;
 import com.datacoper.locacaoequipamentos.persistence.dao.DAO;
+import com.datacoper.locacaoequipamentos.persistence.dbutil.MyBeanHandler;
+import com.datacoper.locacaoequipamentos.persistence.dbutil.MyBeanListHandler;
+import com.datacoper.locacaoequipamentos.persistence.util.SequenceValue;
 
 public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> implements DAO<T, PK> {
 
 	protected Connection connection;
-
-	public AbstractDAOJdbc() {
-		this(ConnectionController.getInstance().getConnection());
+	private Class<T> entityClass;
+	
+	public AbstractDAOJdbc(Class<T> entityClass) {
+		this(ConnectionController.getInstance().getConnection(), entityClass);
 	}
 
-	public AbstractDAOJdbc(Connection connection) {
+	public AbstractDAOJdbc(Connection connection, Class<T> entityClass) {
 		this.connection = connection;
+		this.entityClass = entityClass;
 	}
 
 	@Override
@@ -46,7 +62,7 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		}
 	}
 
-	private Object getId(T object) throws IllegalArgumentException, IllegalAccessException {
+	private Object getId(Object object) throws IllegalArgumentException, IllegalAccessException {
 		Object o = ReflectionUtils.getValueByFieldByAnnotation(object.getClass(), Id.class, object);
 		if (o == null) {
 			o = ReflectionUtils.getValueByFieldByAnnotation(object.getClass(), EmbeddedId.class, object);
@@ -63,13 +79,14 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 			for (Field field : classe.getDeclaredFields()) {
 				if (!field.isAnnotationPresent(Transient.class)) {
-					if (field.isAnnotationPresent(Column.class) && !field.isAnnotationPresent(Id.class) && !field.isAnnotationPresent(EmbeddedId.class)) {
+					if (field.isAnnotationPresent(Enumerated.class) || field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(JoinColumn.class)
+							&& !field.isAnnotationPresent(Id.class) && !field.isAnnotationPresent(EmbeddedId.class)) {
 						map.put(getColumnName(field), ReflectionUtils.getValue(field, object));
 					}
 				}
 			}
 
-			String sqlUpdate = "UPDATE " + getTableName(object) + " SET # " + getWhere(object);
+			String sqlUpdate = "UPDATE " + getTableName(object.getClass()) + " SET # " + getWhere(object);
 
 			String valores = "";
 
@@ -92,8 +109,9 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		} catch (IllegalAccessException e) {
 			throw new PersistenceException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceException(e);
+		} catch (Exception e) {
+			throw new PersistenceException(e);
 		}
 
 		return null;
@@ -107,13 +125,19 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 			for (Field field : classe.getDeclaredFields()) {
 				if (!field.isAnnotationPresent(Transient.class)) {
-					if (field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class)) {
-						map.put(getColumnName(field), ReflectionUtils.getValue(field, object));
+					if (field.isAnnotationPresent(Enumerated.class) || field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(JoinColumn.class)
+							|| field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class)) {
+						Object value = ReflectionUtils.getValue(field, object);
+						if (value == null && field.isAnnotationPresent(GeneratedValue.class)) {
+							value = nextId(field);
+						}
+						
+						map.put(getColumnName(field), value);
 					}
 				}
 			}
 
-			String sqlInsert = "INSERT INTO " + getTableName(object) + "(#) VALUES (&)";
+			String sqlInsert = "INSERT INTO " + getTableName(object.getClass()) + "(#) VALUES (&)";
 			String colunas = "";
 			String valores = "";
 
@@ -137,31 +161,64 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		} catch (IllegalAccessException e) {
 			throw new PersistenceException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceException(e);
+		} catch (Exception e) {
+			throw new PersistenceException(e);
 		}
 
 		return null;
 	}
 
-	public String getFormattedValue(Object o) {
+	public List<T> search(String filtro, String valorFiltro, Class<T> classe) throws Exception {
+		String col = "";
+		String where = "";
+		for (Field f : classe.getDeclaredFields()) {
+			if (f.isAnnotationPresent(ColumnTableSearch.class)) {
+				ColumnTableSearch annotation = f.getAnnotation(ColumnTableSearch.class);
+				col += getColumnName(f) + ",";
+
+				if (filtro.equals(f.getName())) {
+					where += getColumnName(f) + getFormatterValue(annotation.comparador(), valorFiltro);
+				}
+			}
+		}
+		where = where.equals("") ? where : " WHERE ";
+
+		String sql = "SELECT " + col.substring(0, col.length() - 1) + " from " + getTableName(classe) + " #";
+		sql = sql.replaceAll("#", where);
+
+		return getResult(sql, classe);
+	}
+
+	private String getFormatterValue(Comparador cc, String valor) throws Exception {
+		if (cc.equals(Comparador.LIKE)) {
+			return " "+ cc.getSql() + " '%" + valor + "%'";
+		} else {
+			return cc.getSql() + getFormattedValue(valor);
+		}
+	}
+
+	public String getFormattedValue(Object o) throws Exception {
 		String retorno = "";
 
 		if (o instanceof String) {
 			retorno = "'" + o.toString() + "'";
-		}else if (o instanceof Date) {
+		} else if (o instanceof Date) {
 			retorno = "'" + new SimpleDateFormat("yyyy-MM-dd").format((Date) o) + "'";
-		}else if(o instanceof Enum){
-			Object[] e = ((Class<? extends Object>)o.getClass()).getEnumConstants();
+		} else if (o instanceof Enum) {
+			Object[] e = ((Class<? extends Object>) o.getClass()).getEnumConstants();
 			for (int i = 0; i < e.length; i++) {
-				if (o.equals(e[i])) { 
+				if (o.equals(e[i])) {
 					retorno = String.valueOf(i);
 				}
 			}
 		} else if (o.getClass().isAnnotationPresent(Entity.class)) {
-			
-		}
-		else {
+			for (Field f : o.getClass().getDeclaredFields()) {
+				if (f.isAnnotationPresent(Id.class)) {
+					retorno = getFormattedValue(getId(o));
+				}
+			}
+		} else {
 			retorno = String.valueOf(o);
 		}
 
@@ -171,7 +228,7 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 	@Override
 	public void remove(T object) throws Exception {
 
-		String sql = "DELETE FROM " + getTableName(object) + getWhere(object);
+		String sql = "DELETE FROM " + getTableName(object.getClass()) + getWhere(object);
 
 		PreparedStatement pst = connection.prepareStatement(sql);
 		pst.executeUpdate();
@@ -220,9 +277,8 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		return map;
 	}
 
-	private String getTableName(T object) {
+	private String getTableName(Class<?> classe) {
 		String nomeTabela = null;
-		Class classe = object.getClass();
 		if (classe.isAnnotationPresent(Table.class)) {
 			nomeTabela = ((Table) classe.getAnnotation(Table.class)).name();
 		}
@@ -236,11 +292,14 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 	private String getColumnName(Field field) {
 		String coluna = null;
-		if (field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class)) {
+		if (field.isAnnotationPresent(Column.class)) {
 			coluna = ((Column) field.getAnnotation(Column.class)).name();
-			if (coluna == null || coluna.isEmpty()) {
-				coluna = field.getName();
-			}
+		} else if (field.isAnnotationPresent(JoinColumn.class)) {
+			coluna = ((JoinColumn) field.getAnnotation(JoinColumn.class)).name();
+		}
+
+		if (coluna == null || coluna.isEmpty()) {
+			coluna = field.getName();
 		}
 
 		return coluna;
@@ -254,68 +313,66 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 	@Override
 	public List<T> getAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT * FROM " + getTableName(entityClass);
+		return getResult(sql, entityClass);
 	}
 
+	
 	@Override
 	public Integer nextId() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		for (Field f : entityClass.getDeclaredFields()) {
+			if (f.isAnnotationPresent(GeneratedValue.class)) {
+				return nextId(f);
+			}
+		}
+		throw new PersistenceException("Não foi encontrada a anotação GeneratedValue para a classe");
+	}
+	
+	public Integer nextId(Field field) throws Exception {
+		GeneratedValue a =  field.getAnnotation(GeneratedValue.class);
+		if (a.generator() == null || a.generator().equals("")) {
+			throw new PersistenceException("Não foi possível determinar o proximo sequencial. Verifique se a coluna está anotada com GeneratedValue");
+		}
+		
+		return nextId(a.generator()); 
+	}
+	
+	public Integer nextId(String sequence) throws Exception {		
+		String sql = "select nextval('" + sequence + "') as value";
+		SequenceValue sequenceValue = getSingleResult(sql, SequenceValue.class);
+		return sequenceValue.getValue();
 	}
 
-	//
-	//
-	// public AbstractDAOJdbc(Connection connection) {
-	// this.connection = connection;
-	// }
-	//
-	// protected Integer getNextSequenceValue(String sequenceName) {
-	// String sql = "select nextval('" + sequenceName + "') as value";
-	// SequenceValue sequenceValue = getSingleResult(sql, SequenceValue.class);
-	// return sequenceValue.getValue();
-	// }
-	//
-	// protected <T> T getSingleResult(String sql, Class<T> returnType) {
-	//
-	// MyBeanHandler<T> resultHandler = new MyBeanHandler<T>(returnType);
-	//
-	// T result = executeQuery(sql, resultHandler);
-	//
-	// return result;
-	// }
-	//
-	//
-	// protected <T> List<T> getResult(String sql, Class<T> returnType) {
-	// MyBeanListHandler<T> resultHandler = new
-	// MyBeanListHandler<T>(returnType);
-	//
-	// List<T> result = executeQuery(sql, resultHandler);
-	//
-	// return result;
-	// }
-	//
-	// private <T> T executeQuery(String sql, ResultSetHandler<T> resultHandler)
-	// {
-	// System.out.println(sql);
-	// QueryRunner queryRunner = new QueryRunner();
-	// T result;
-	// try {
-	// result = queryRunner.query(connection, sql, resultHandler);
-	// } catch (SQLException e) {
-	// throw new RuntimeException(e);
-	// }
-	// return result;
-	// }
-	//
-	// protected void closeResource(AutoCloseable... resources) {
-	// for (AutoCloseable resource : resources) {
-	// try {
-	// resource.close();
-	// } catch (Exception e) {
-	// throw new RuntimeException(e);
-	// }
-	// }
-	// }
+	protected <S>S getSingleResult(String sql, Class<S> returnType) {
+		MyBeanHandler<S> resultHandler = new MyBeanHandler<S>(returnType);
+		return executeQuery(sql, resultHandler);
+	}
+
+	protected <S> List<S> getResult(String sql, Class<S> returnType) {
+		MyBeanListHandler<S> resultHandler = new MyBeanListHandler<S>(returnType);
+		return executeQuery(sql, resultHandler);
+	}
+
+	private <T> T executeQuery(String sql, ResultSetHandler<T> resultHandler) {
+		System.out.println(sql);
+		QueryRunner queryRunner = new QueryRunner();
+		T result;
+		try {
+			result = queryRunner.query(connection, sql, resultHandler);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return result;
+	}
+
+	protected void closeResource(AutoCloseable... resources) {
+		for (AutoCloseable resource : resources) {
+			try {
+				resource.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 }

@@ -24,7 +24,7 @@ public class ClienteServiceImpl implements ClienteService {
 
 	public ClienteServiceImpl() {
 		try {
-			clienteDAO = DAOFactory.getInstance(ClienteDAO.class);
+			clienteDAO = DAOFactory.getInstance(ClienteDAO.class, Pessoa.class);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

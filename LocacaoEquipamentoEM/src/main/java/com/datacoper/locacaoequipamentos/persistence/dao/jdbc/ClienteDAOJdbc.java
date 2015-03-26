@@ -21,9 +21,8 @@ import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.ClienteDAO;
  */
 public class ClienteDAOJdbc extends AbstractDAOJdbc<Pessoa, Integer> implements ClienteDAO {
 
-	@Override
-	public List<Pessoa> search(String filtro, String valorFiltro) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ClienteDAOJdbc(Class<Pessoa> entityClass) {
+		super(entityClass);
 	}
+
 }

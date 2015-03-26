@@ -1,9 +1,10 @@
-	package com.datacoper.locacaoequipamentos.client.cliente;
+package com.datacoper.locacaoequipamentos.client.cliente;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,7 +23,7 @@ import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
 import com.datacoper.locacaoequipamentos.common.service.interfaces.ClienteService;
 
-public class FormCadastroCliente extends FormPadraoCadastro {
+public class FormCadastroCliente extends FormPadraoCadastro<Pessoa> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,12 +52,21 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 	private JPanel panelEndereco;
 
 	public FormCadastroCliente() {
-		super();
+		this(null);
+	}
+	
+	public FormCadastroCliente(Pessoa pessoa) {
+		super(pessoa);
+		
 		panelDados.setLayout(null);
 		init();
 
 		getClienteService();
 		setComponentsDisable();
+		
+		if (object != null) {
+			carregarTela(object);
+		}
 	}
 
 	private void setComponentsDisable() {
@@ -257,7 +267,6 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 		panelDados.add(dataCadastroField);
 		dataCadastroField.setColumns(10);
 		dataCadastroField.setEnabled(false);
-
 	}
 
 	public void novo() {
@@ -292,12 +301,7 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 	}
 
 	public void localizar() {
-		abrirFormBuscaCliente();
 		super.localizar();
-	}
-
-	public void abrirFormBuscaCliente() {
-		//atualizarCliente((Pessoa) new FormBuscaCliente().abrirPesquisa());
 	}
 
 	@Override
@@ -334,38 +338,8 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 
 	}
 
-	private void atualizarCliente(Pessoa cliente) {
-		ViewMethods.chaveadorCampos(panelEndereco, true);
-		ViewMethods.chaveadorCampos(panelPessoa, true);
-		/*idClienteField.setText(String.valueOf(cliente.getIdCliente()));
-		cpfClienteField.setText(cliente.getCpf());
-		telefoneClienteField.setText(cliente.getTelefone());
-		nomeClienteField.setText(cliente.getNome());
-		rgClienteField.setText(cliente.getRg());
-		emailClienteField.setText(cliente.getEmail());
-		dataCadastroField.setText(cliente.getDataCadastro());
-		cidadeClienteField.setText(cliente.getEndereco().getCidade());
-		cepClienteField.setText(cliente.getEndereco().getCep());
-		ruaClienteField.setText(cliente.getEndereco().getRua());
-		complementoClienteField.setText(cliente.getEndereco().getComplemento());
-		numeroClienteField.setText(String.valueOf(cliente.getEndereco().getNumero()));
-		sexoClienteBox.setSelectedItem(cliente.getSexo());
-		estadoCivilClienteBox.setSelectedItem(cliente.getEstadoCivil());
-		estadoClienteBox.setSelectedItem(cliente.getEndereco().getEstado());
-		bairroClienteField.setText(cliente.getEndereco().getBairro());
-		String formato = "dd/MM/yyyy";
-		Date DataTemp = new Date();
-		try {
-			DataTemp = new SimpleDateFormat(formato).parse(cliente.getDataNascimento());
-		} catch (ParseException ex) {
-		}
-		nascimentoClienteField.setDate(DataTemp);*/
-	}
-
 	private Pessoa obterCliente() {
-		/*Date data = new Date();
-		data = nascimentoClienteField.getDate();
-		Pessoa cliente = new Pessoa();
+		/*Pessoa cliente = new Pessoa();
 		cliente.setNome(nomeClienteField.getText());
 		cliente.setCpf(cpfClienteField.getText());
 		cliente.setRg(rgClienteField.getText());
@@ -419,5 +393,32 @@ public class FormCadastroCliente extends FormPadraoCadastro {
 			showMessageDialog(null, ex.getMessage(), "Erro", ERROR_MESSAGE);
 		}
 
+	}
+
+
+	@Override
+	public void carregarTela(Pessoa pessoa) {
+		ViewMethods.chaveadorCampos(panelEndereco, true);
+		ViewMethods.chaveadorCampos(panelPessoa, true);
+		
+		idClienteField.setText(String.valueOf(pessoa.getIdPessoa()));
+		cpfClienteField.setText(pessoa.getNrCpf());
+		telefoneClienteField.setText(pessoa.getNrTelefone());
+		nomeClienteField.setText(pessoa.getNmPessoa());
+		rgClienteField.setText(pessoa.getNrRg());
+		emailClienteField.setText(pessoa.getDsEmail());
+		if (pessoa.getDtCadastro() != null) {
+			dataCadastroField.setText(DateFormat.getDateInstance().format(pessoa.getDtCadastro()));
+		}
+		/*cidadeClienteField.setText(pessoa.getEndereco().getCidade());
+		cepClienteField.setText(pessoa.getEndereco().getCep());
+		ruaClienteField.setText(pessoa.getEndereco().getRua());
+		complementoClienteField.setText(pessoa.getEndereco().getComplemento());
+		numeroClienteField.setText(String.valueOf(pessoa.getEndereco().getNumero()));
+		sexoClienteBox.setSelectedItem(pessoa.getSexo());
+		estadoCivilClienteBox.setSelectedItem(pessoa.getEstadoCivil());
+		estadoClienteBox.setSelectedItem(pessoa.getEndereco().getEstado());
+		bairroClienteField.setText(pessoa.getEndereco().getBairro());
+		nascimentoClienteField.setDate(DataTemp);*/
 	}
 }
