@@ -1,4 +1,4 @@
-package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
+package com.datacoper.locacaoequipamentos.persistence.connections;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

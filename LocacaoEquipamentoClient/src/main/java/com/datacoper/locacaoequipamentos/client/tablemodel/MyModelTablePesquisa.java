@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
-import com.dc.locacaoequipamentocommon.util.ReflectionUtils;
+import com.datacoper.locacaoequipamentos.common.util.ReflectionUtils;
 
 public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
 	private List<T> valores;
@@ -20,7 +20,7 @@ public class MyModelTablePesquisa<T extends Object> extends AbstractTableModel {
 		this.classePesquisa = classePesquisa;
 		this.valores = valores;
 		colunas = new LinkedList<>();
-		List<Field> fields = ReflectionUtils.fieldByAnnotation(classePesquisa, (Class<? extends Annotation>) ColumnTableSearch.class);
+		List<Field> fields = ReflectionUtils.getFieldByAnnotation(classePesquisa, (Class<? extends Annotation>) ColumnTableSearch.class);
 
 		for (Field f : fields) {
 			ColumnTableSearch a = f.getAnnotation(ColumnTableSearch.class);

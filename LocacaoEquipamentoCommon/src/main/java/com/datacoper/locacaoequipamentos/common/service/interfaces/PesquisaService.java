@@ -1,9 +1,11 @@
-package com.datacoper.locacaoequipamentos.common.service;
+package com.datacoper.locacaoequipamentos.common.service.interfaces;
 
 import java.util.List;
 
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 
-public interface Service {
+public interface PesquisaService {
+
 	public abstract <T> List<T> pesquisar(String object, String valorFiltro) throws BusinessException;
+
 }

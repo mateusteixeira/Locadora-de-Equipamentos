@@ -5,14 +5,11 @@
  */
 package com.datacoper.locacaoequipamentos.persistence.dao.interfaces;
 
-import java.util.List;
-
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
+import com.datacoper.locacaoequipamentos.persistence.dao.DAO;
 
 /**
  *
  * @author Java
  */
-public interface ClienteDAO extends DAO<Pessoa, Integer> {
-	
-}
+public interface ClienteDAO extends DAO<Pessoa, Integer> {}

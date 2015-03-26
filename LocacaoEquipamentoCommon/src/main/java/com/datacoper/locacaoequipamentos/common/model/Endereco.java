@@ -1,82 +1,113 @@
 package com.datacoper.locacaoequipamentos.common.model;
 
-public class Endereco {
-	private PessoaPK cdPessoa;
-	private String nrCep;
-	private Cidade idCidade;
-	private String nmBairro;
-	private String nmLogradouro; 
-	private String nrEndereco;
+
+
+import java.io.Serializable;
+import javax.persistence.*;
+
+
+/**
+ * The persistent class for the endereco database table.
+ * 
+ */
+@Entity
+@NamedQuery(name="Endereco.findAll", query="SELECT e FROM Endereco e")
+public class Endereco implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@EmbeddedId
+	private EnderecoPK id;
+
+	@Column(name="ds_complemento")
 	private String dsComplemento;
-	
+
+	@Column(name="nm_bairro")
+	private String nmBairro;
+
+	@Column(name="nm_logradouro")
+	private String nmLogradouro;
+
+	@Column(name="nr_cep")
+	private String nrCep;
+
+	@Column(name="nr_endereco")
+	private String nrEndereco;
+
+	//bi-directional many-to-one association to Cidade
+	@ManyToOne
+	@JoinColumn(name="cd_cidade")
+	private Cidade cidade;
+
+	//bi-directional many-to-one association to Pessoa
+	@ManyToOne
+	@JoinColumn(name="id_pessoa")
+	private Pessoa pessoa;
+
 	public Endereco() {
-		super();
 	}
 
-	public Endereco(PessoaPK cdPessoa, String nrCep, Cidade idCidade, String nmBairro, String nmLogradouro, String nrEndereco, String dsComplemento) {
-		super();
-		this.cdPessoa = cdPessoa;
-		this.nrCep = nrCep;
-		this.idCidade = idCidade;
-		this.nmBairro = nmBairro;
-		this.nmLogradouro = nmLogradouro;
-		this.nrEndereco = nrEndereco;
-		this.dsComplemento = dsComplemento;
+	public EnderecoPK getId() {
+		return this.id;
 	}
 
-	public PessoaPK getCdPessoa() {
-		return cdPessoa;
+	public void setId(EnderecoPK id) {
+		this.id = id;
 	}
-	
-	public void setCdPessoa(PessoaPK cdPessoa) {
-		this.cdPessoa = cdPessoa;
-	}
-	
-	public String getNrCep() {
-		return nrCep;
-	}
-	
-	public void setNrCep(String nrCep) {
-		this.nrCep = nrCep;
-	}
-	
-	public Cidade getIdCidade() {
-		return idCidade;
-	}
-	
-	public void setIdCidade(Cidade idCidade) {
-		this.idCidade = idCidade;
-	}
-	
-	public String getNmBairro() {
-		return nmBairro;
-	}
-	
-	public void setNmBairro(String nmBairro) {
-		this.nmBairro = nmBairro;
-	}
-	
-	public String getNmLogradouro() {
-		return nmLogradouro;
-	}
-	
-	public void setNmLogradouro(String nmLogradouro) {
-		this.nmLogradouro = nmLogradouro;
-	}
-	
-	public String getNrEndereco() {
-		return nrEndereco;
-	}
-	
-	public void setNrEndereco(String nrEndereco) {
-		this.nrEndereco = nrEndereco;
-	}
-	
+
 	public String getDsComplemento() {
-		return dsComplemento;
+		return this.dsComplemento;
 	}
-	
+
 	public void setDsComplemento(String dsComplemento) {
 		this.dsComplemento = dsComplemento;
 	}
+
+	public String getNmBairro() {
+		return this.nmBairro;
+	}
+
+	public void setNmBairro(String nmBairro) {
+		this.nmBairro = nmBairro;
+	}
+
+	public String getNmLogradouro() {
+		return this.nmLogradouro;
+	}
+
+	public void setNmLogradouro(String nmLogradouro) {
+		this.nmLogradouro = nmLogradouro;
+	}
+
+	public String getNrCep() {
+		return this.nrCep;
+	}
+
+	public void setNrCep(String nrCep) {
+		this.nrCep = nrCep;
+	}
+
+	public String getNrEndereco() {
+		return this.nrEndereco;
+	}
+
+	public void setNrEndereco(String nrEndereco) {
+		this.nrEndereco = nrEndereco;
+	}
+
+	public Cidade getCidade() {
+		return this.cidade;
+	}
+
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
+	}
+
+	public Pessoa getPessoa() {
+		return this.pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
+
 }

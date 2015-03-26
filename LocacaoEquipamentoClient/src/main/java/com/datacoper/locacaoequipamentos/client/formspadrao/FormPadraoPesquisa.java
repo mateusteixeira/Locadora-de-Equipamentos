@@ -1,5 +1,8 @@
 package com.datacoper.locacaoequipamentos.client.formspadrao;
 
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -27,16 +30,15 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import static javax.swing.JOptionPane.*;
 
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTablePesquisa;
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
-import com.datacoper.locacaoequipamentos.common.service.Service;
 import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
+import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaService;
 
 public class FormPadraoPesquisa<T> extends JDialog {
 
-	private Service service;
+	private PesquisaService service;
 	private String[] filtros;
 	private Class<T> classPesquisa;
 	
@@ -44,10 +46,10 @@ public class FormPadraoPesquisa<T> extends JDialog {
 	 * @wbp.parser.constructor
 	 */
 	public FormPadraoPesquisa(Class<T> classPesquisa) {
-		this(ServiceLocator.loadService(Service.class, classPesquisa), classPesquisa);
+		this(ServiceLocator.loadService(PesquisaService.class, classPesquisa), classPesquisa);
 	}
 	
-	public FormPadraoPesquisa(Service service, Class<T> classPesquisa) {
+	public FormPadraoPesquisa(PesquisaService service, Class<T> classPesquisa) {
 		this.classPesquisa = classPesquisa;
 		this.service = service;
 		

@@ -38,7 +38,7 @@ import java.util.Map;
 
 import org.apache.commons.dbutils.BeanProcessor;
 
-import com.dc.locacaoequipamentocommon.util.ReflectionUtils;
+import com.datacoper.locacaoequipamentos.common.util.ReflectionUtils;
 
 /**
  * <p>

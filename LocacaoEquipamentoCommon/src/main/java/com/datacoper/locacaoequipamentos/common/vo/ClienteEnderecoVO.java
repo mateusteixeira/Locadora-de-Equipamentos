@@ -1,4 +1,4 @@
-package com.dc.locacaoequipamentocommon.vo;
+package com.datacoper.locacaoequipamentos.common.vo;
 
 import com.datacoper.locacaoequipamentos.common.model.Endereco;
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;

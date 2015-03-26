@@ -1,9 +1,9 @@
-package com.datacoper.locacaoequipamentos.vohandler;
+package com.datacoper.locacaoequipamentos.persistence.vohandler;
 
 import java.util.List;
 
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
-import com.dc.locacaoequipamentocommon.vo.ClienteEnderecoVO;
+import com.datacoper.locacaoequipamentos.common.vo.ClienteEnderecoVO;
 
 public class ClienteEnderecoHandler {
 	/*

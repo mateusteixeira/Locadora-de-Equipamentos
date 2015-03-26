@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.datacoper.locacaoequipamentos.util;
-
-import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.DAOFactory;
+package com.datacoper.locacaoequipamentos.persistence.util;
 
 import java.io.IOException;
 import java.util.Properties;
+
+import com.datacoper.locacaoequipamentos.persistence.dao.DAOFactory;
 
 /**
  *

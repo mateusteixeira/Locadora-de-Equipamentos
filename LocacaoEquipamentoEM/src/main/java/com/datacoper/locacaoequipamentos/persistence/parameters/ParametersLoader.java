@@ -36,16 +36,10 @@ public abstract class ParametersLoader {
 		init();
 	}
 
-	public static <T> Class<T> getClassDao(Class<T> classe) {
+	public static ParametersDAO getParamderByClass(Class<?> classe) {
 		for (ParametersDAO p : getListaDAO()) {
 			if (p.getClassDao() == classe || p.getClasse() == classe) {
-				if (getPersistenceType().equalsIgnoreCase("jdbc")) {
-					return (Class<T>)p.getClassJDBC();
-				} else if (getPersistenceType().equalsIgnoreCase("jpa")) {
-					return (Class<T>) p.getClassJPA();
-				} else {
-					//tratar
-				}
+				return p;
 			}
 		}
 		return null;

@@ -1,4 +1,4 @@
-package com.dc.locacaoequipamentocommon.util;
+package com.datacoper.locacaoequipamentos.common.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,10 +9,10 @@ import java.util.Map;
 
 public abstract class ReflectionUtils {
 
-	public static List<Field> fieldByAnnotation(Class<?> classe, Class<? extends Annotation> annotation) {
+	public static List<Field> getFieldByAnnotation(Class<?> classe, Class<? extends Annotation> annotation) {
 		List<Field> fields = new LinkedList<Field>();
 		if (classe.getSuperclass() != null) {
-			fields.addAll(fieldByAnnotation(classe.getSuperclass(), annotation));
+			fields.addAll(getFieldByAnnotation(classe.getSuperclass(), annotation));
 		}
 
 		for (Field f : classe.getDeclaredFields()) {
@@ -20,7 +20,6 @@ public abstract class ReflectionUtils {
 				fields.add(f);
 			}
 		}
-
 		return fields;
 	}
 
@@ -32,6 +31,21 @@ public abstract class ReflectionUtils {
 		}
 
 		return fields;
+	}
+
+	public static <T> T getValueByFieldByAnnotation(Class classe, Class annotation, T object) throws IllegalArgumentException, IllegalAccessException {
+		return (T) getValue(getFieldByAnnotation(classe, annotation).get(0), object);
+	}
+
+	public static Object getValueByFieldByFirstValidValueByAnnotation(Class classe, Object object, Class... annotation) throws IllegalArgumentException,
+			IllegalAccessException {
+		for (Class an : annotation) {
+			Object o = getFieldByAnnotation(classe, an);
+			if (o != null) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 	public static Field getField(Class classeItem, String nmCampo) throws NoSuchFieldError {
@@ -47,7 +61,7 @@ public abstract class ReflectionUtils {
 		return f;
 	}
 
-	private static Object getValue(Field field, Object object) throws IllegalArgumentException, IllegalAccessException {
+	public static Object getValue(Field field, Object object) throws IllegalArgumentException, IllegalAccessException {
 		/*
 		 * Verifica se o campo está acessível, caso não esteja converte para
 		 * acessivel e altera o status da flag Para que ao final do método, o

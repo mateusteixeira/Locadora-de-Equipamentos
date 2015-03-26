@@ -3,7 +3,7 @@ package com.datacoper.locacaoequipamentos.persistence.transaction;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.datacoper.locacaoequipamentos.persistence.dao.jdbc.ConnectionController;
+import com.datacoper.locacaoequipamentos.persistence.connections.ConnectionController;
 import com.datacoper.locacaoequipamentos.persistence.exception.PersistenceException;
 
 public class TransactionManagerJdbc implements ITransaction {

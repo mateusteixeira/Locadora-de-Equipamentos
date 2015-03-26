@@ -1,126 +1,185 @@
 package com.datacoper.locacaoequipamentos.common.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
 
+/**
+ * The persistent class for the pessoa database table.
+ * 
+ */
+@Entity
+@NamedQuery(name = "Pessoa.findAll", query = "SELECT p FROM Pessoa p")
+public class Pessoa implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class Pessoa {
-	@ColumnTableSearch(header="Codigo", width=70)
+	@Id
+	@Column(name = "id_pessoa")
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pessoa_id_seq")
 	private Integer idPessoa;
-	@ColumnTableSearch(header="Nome", width=200)
-	private String nmPessoa;
-	@ColumnTableSearch(header="CPF", width=100)
-	private String nrCpf;
-	private String nrRg;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_nascimento")
 	private Date dtNascimento;
-	private Sexo sexo;
+
+	@Column(name = "id_estado_civil")
+	@Enumerated(EnumType.ORDINAL)
 	private EstadoCivil idEstadoCivil;
-	private RelacaoPessoa idRelacaoPessoa;
-	@ColumnTableSearch(header="Telefone", width=80)
+
+	@Column(name = "nm_pessoa")
+	private String nmPessoa;
+
+	@Column(name = "nr_cpf")
+	private String nrCpf;
+
+	@Column(name = "nr_rg")
+	private String nrRg;
+
+	@Column(name = "nr_telefone")
 	private String nrTelefone;
-	
+	@Enumerated(EnumType.ORDINAL)
+	private Sexo sexo;
+
+	// bi-directional many-to-one association to Endereco
+	@OneToMany(mappedBy = "pessoa")
 	private List<Endereco> enderecos;
-	
+
+	// bi-directional many-to-one association to RelacaoPessoa
+	@ManyToOne
+	@JoinColumn(name = "id_relacao_pessoa")
+	private RelacaoPessoa relacaoPessoa;
+
 	public Pessoa() {
-		super();
 	}
 
-	public Pessoa(Integer idPessoa, String nmPessoa, String nrCpf, String nrRg, Date dtNascimento, Sexo sexo, EstadoCivil idEstadoCivil,
-			RelacaoPessoa idRelacaoPessoa, String nrTelefone, List<Endereco> enderecos) {
-		super();
+	public Pessoa(Integer idPessoa, String nome) {
 		this.idPessoa = idPessoa;
+		this.nmPessoa = nome;
+	}
+
+	public Pessoa(Integer idPessoa, Date dtNascimento, EstadoCivil idEstadoCivil, String nmPessoa, String nrCpf, String nrRg, String nrTelefone, Sexo sexo,
+			List<Endereco> enderecos, RelacaoPessoa relacaoPessoa) {
+		this.idPessoa = idPessoa;
+		this.dtNascimento = dtNascimento;
+		this.idEstadoCivil = idEstadoCivil;
 		this.nmPessoa = nmPessoa;
 		this.nrCpf = nrCpf;
 		this.nrRg = nrRg;
-		this.dtNascimento = dtNascimento;
-		this.sexo = sexo;
-		this.idEstadoCivil = idEstadoCivil;
-		this.idRelacaoPessoa = idRelacaoPessoa;
 		this.nrTelefone = nrTelefone;
+		this.sexo = sexo;
 		this.enderecos = enderecos;
+		this.relacaoPessoa = relacaoPessoa;
 	}
 
 	public Integer getIdPessoa() {
-		return idPessoa;
+		return this.idPessoa;
 	}
-	
+
 	public void setIdPessoa(Integer idPessoa) {
 		this.idPessoa = idPessoa;
 	}
-	
-	public String getNmPessoa() {
-		return nmPessoa;
-	}
-	
-	public void setNmPessoa(String nmPessoa) {
-		this.nmPessoa = nmPessoa;
-	}
-	
-	public String getNrCpf() {
-		return nrCpf;
-	}
-	
-	public void setNrCpf(String nrCpf) {
-		this.nrCpf = nrCpf;
-	}
-	
-	public String getNrRg() {
-		return nrRg;
-	}
-	
-	public void setNrRg(String nrRg) {
-		this.nrRg = nrRg;
-	}
-	
+
 	public Date getDtNascimento() {
-		return dtNascimento;
+		return this.dtNascimento;
 	}
-	
-	public void setDtNascimento(Date dt_nascimento) {
-		this.dtNascimento = dt_nascimento;
+
+	public void setDtNascimento(Date dtNascimento) {
+		this.dtNascimento = dtNascimento;
 	}
-	
-	public Sexo getSexo() {
-		return sexo;
-	}
-	
-	public void setSexo(Sexo sexo) {
-		this.sexo = sexo;
-	}
-	
+
 	public EstadoCivil getIdEstadoCivil() {
-		return idEstadoCivil;
+		return this.idEstadoCivil;
 	}
-	
+
 	public void setIdEstadoCivil(EstadoCivil idEstadoCivil) {
 		this.idEstadoCivil = idEstadoCivil;
 	}
-	
-	public RelacaoPessoa getIdRelacaoPessoa() {
-		return idRelacaoPessoa;
+
+	public String getNmPessoa() {
+		return this.nmPessoa;
 	}
-	
-	public void setIdRelacaoPessoa(RelacaoPessoa idRelacaoPessoa) {
-		this.idRelacaoPessoa = idRelacaoPessoa;
+
+	public void setNmPessoa(String nmPessoa) {
+		this.nmPessoa = nmPessoa;
+	}
+
+	public String getNrCpf() {
+		return this.nrCpf;
+	}
+
+	public void setNrCpf(String nrCpf) {
+		this.nrCpf = nrCpf;
+	}
+
+	public String getNrRg() {
+		return this.nrRg;
+	}
+
+	public void setNrRg(String nrRg) {
+		this.nrRg = nrRg;
 	}
 
 	public String getNrTelefone() {
-		return nrTelefone;
+		return this.nrTelefone;
 	}
 
 	public void setNrTelefone(String nrTelefone) {
 		this.nrTelefone = nrTelefone;
 	}
 
+	public Sexo getSexo() {
+		return this.sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+
 	public List<Endereco> getEnderecos() {
-		return enderecos;
+		return this.enderecos;
 	}
 
 	public void setEnderecos(List<Endereco> enderecos) {
 		this.enderecos = enderecos;
 	}
+
+	public Endereco addEndereco(Endereco endereco) {
+		getEnderecos().add(endereco);
+		endereco.setPessoa(this);
+
+		return endereco;
+	}
+
+	public Endereco removeEndereco(Endereco endereco) {
+		getEnderecos().remove(endereco);
+		endereco.setPessoa(null);
+
+		return endereco;
+	}
+
+	public RelacaoPessoa getRelacaoPessoa() {
+		return this.relacaoPessoa;
+	}
+
+	public void setRelacaoPessoa(RelacaoPessoa relacaoPessoa) {
+		this.relacaoPessoa = relacaoPessoa;
+	}
+
 }

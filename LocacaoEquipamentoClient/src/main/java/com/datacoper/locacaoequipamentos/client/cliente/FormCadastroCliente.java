@@ -4,11 +4,8 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -21,11 +18,9 @@ import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoCadastro;
 import com.datacoper.locacaoequipamentos.client.util.ViewMethods;
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
-import com.datacoper.locacaoequipamentos.common.model.Endereco;
 import com.datacoper.locacaoequipamentos.common.model.enums.EstadoCivil;
 import com.datacoper.locacaoequipamentos.common.model.enums.Sexo;
-import com.datacoper.locacaoequipamentos.common.service.ClienteService;
-import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
+import com.datacoper.locacaoequipamentos.common.service.interfaces.ClienteService;
 
 public class FormCadastroCliente extends FormPadraoCadastro {
 

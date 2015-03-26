@@ -1,41 +1,89 @@
 package com.datacoper.locacaoequipamentos.common.model;
 
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
-public class Cidade {
+
+/**
+ * The persistent class for the cidade database table.
+ * 
+ */
+@Entity
+@NamedQuery(name="Cidade.findAll", query="SELECT c FROM Cidade c")
+public class Cidade implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name="id_cidade")
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cidade_id_seq")
 	private Integer idCidade;
+
+	@Column(name="cd_estado")
+	private Integer cdEstado;
+
+	@Column(name="nm_cidade")
 	private String nmCidade;
-	private Estado cdEstado;
-	
+
+	//bi-directional many-to-one association to Endereco
+	@OneToMany(mappedBy="cidade")
+	private List<Endereco> enderecos;
+
 	public Cidade() {
-		super();
 	}
 
-	public Cidade(Integer idCidade, String nmCidade, Estado cdEstado) {
-		super();
-		this.idCidade = idCidade;
-		this.nmCidade = nmCidade;
-		this.cdEstado = cdEstado;
-	}
-	
 	public Integer getIdCidade() {
-		return idCidade;
+		return this.idCidade;
 	}
+
 	public void setIdCidade(Integer idCidade) {
 		this.idCidade = idCidade;
 	}
-	public String getNmCidade() {
-		return nmCidade;
+
+	public Integer getCdEstado() {
+		return this.cdEstado;
 	}
+
+	public void setCdEstado(Integer cdEstado) {
+		this.cdEstado = cdEstado;
+	}
+
+	public String getNmCidade() {
+		return this.nmCidade;
+	}
+
 	public void setNmCidade(String nmCidade) {
 		this.nmCidade = nmCidade;
 	}
-	public Estado getCdEstado() {
-		return cdEstado;
+
+	public List<Endereco> getEnderecos() {
+		return this.enderecos;
 	}
-	public void setCdEstado(Estado cdEstado) {
-		this.cdEstado = cdEstado;
+
+	public void setEnderecos(List<Endereco> enderecos) {
+		this.enderecos = enderecos;
 	}
-	
+
+	public Endereco addEndereco(Endereco endereco) {
+		getEnderecos().add(endereco);
+		endereco.setCidade(this);
+
+		return endereco;
+	}
+
+	public Endereco removeEndereco(Endereco endereco) {
+		getEnderecos().remove(endereco);
+		endereco.setCidade(null);
+
+		return endereco;
+	}
+
 }

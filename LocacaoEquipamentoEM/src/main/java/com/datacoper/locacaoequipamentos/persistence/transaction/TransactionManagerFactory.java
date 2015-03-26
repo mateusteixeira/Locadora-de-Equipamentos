@@ -1,11 +1,7 @@
 package com.datacoper.locacaoequipamentos.persistence.transaction;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import com.datacoper.locacaoequipamentos.persistence.dao.jdbc.JdbcDAOFactory;
-import com.datacoper.locacaoequipamentos.util.ConfiguracaoSistema;
-import com.datacoper.locacaoequipamentos.util.ParametrosEnum;
+import com.datacoper.locacaoequipamentos.persistence.util.ConfiguracaoSistema;
+import com.datacoper.locacaoequipamentos.persistence.util.ParametrosEnum;
 
 public abstract class TransactionManagerFactory {
 

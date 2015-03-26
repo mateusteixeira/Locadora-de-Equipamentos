@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.datacoper.locacaoequipamentos.business.service;
-
-import java.util.List;
+package com.datacoper.locacaoequipamentos.business.servicesimpl;
 
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
-import com.datacoper.locacaoequipamentos.common.service.ClienteService;
+import com.datacoper.locacaoequipamentos.common.service.interfaces.ClienteService;
+import com.datacoper.locacaoequipamentos.persistence.dao.DAOFactory;
 import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.ClienteDAO;
-import com.datacoper.locacaoequipamentos.persistence.dao.interfaces.DAOFactory;
 import com.datacoper.locacaoequipamentos.persistence.exception.PersistenceException;
 import com.datacoper.locacaoequipamentos.persistence.transaction.ITransaction;
 import com.datacoper.locacaoequipamentos.persistence.transaction.TransactionManagerFactory;
@@ -23,7 +21,7 @@ import com.datacoper.locacaoequipamentos.persistence.transaction.TransactionMana
 public class ClienteServiceImpl implements ClienteService {
 
 	private ClienteDAO clienteDAO;
-	
+
 	public ClienteServiceImpl() {
 		try {
 			clienteDAO = DAOFactory.getInstance(ClienteDAO.class);
@@ -32,7 +30,7 @@ public class ClienteServiceImpl implements ClienteService {
 		}
 
 	}
-	
+
 	@Override
 	public void gravar(Pessoa pessoa) throws BusinessException {
 		validarDadosObrigatorios(pessoa);
@@ -41,12 +39,7 @@ public class ClienteServiceImpl implements ClienteService {
 
 		try {
 			transaction.beginTransaction();
-			if (pessoa.getIdPessoa() == null) {// update
-				atualizarIDCliente(pessoa);
-				clienteDAO.insert(pessoa);
-			} else {
-				clienteDAO.update(pessoa);
-			}
+			clienteDAO.save(pessoa);
 			transaction.commit();
 
 		} catch (Exception e) {
@@ -70,7 +63,7 @@ public class ClienteServiceImpl implements ClienteService {
 	}
 
 	private void atualizarIDCliente(Pessoa pessoa) throws BusinessException {
-		try{
+		try {
 			pessoa.setIdPessoa(clienteDAO.nextId());
 		} catch (Exception ex) {
 			throw new BusinessException(ex);
@@ -96,25 +89,26 @@ public class ClienteServiceImpl implements ClienteService {
 		}
 	}
 
-	@Override
-	public List<Pessoa> encontrarTodosClientes() throws BusinessException {
-		List<Pessoa> clientes;
-		try {
-			clientes = clienteDAO.pesquisarTodos();
-		} catch (Exception e) {
-			throw new BusinessException(e);
-		}
-		return clientes;
-	}
+	// @Override
+	// public List<Pessoa> pesquisar() throws BusinessException {
+	// List<Pessoa> clientes;
+	// try {
+	// clientes = clienteDAO.pesquisarTodos();
+	// } catch (Exception e) {
+	// throw new BusinessException(e);
+	// }
+	// return clientes;
+	// }
 
-	@Override
-	public List<Pessoa> pesquisar(String campoPesquisar, String pesquisa) throws BusinessException {
-		try {
-			return clienteDAO.pesquisar(campoPesquisar, pesquisa);
-		} catch (Exception e) {
-			throw new BusinessException(e);
-		}
-	}
+	// @Override
+	// public List<Pessoa> pesquisar(String campoPesquisar, String pesquisa)
+	// throws BusinessException {
+	// try {
+	// return clienteDAO.pesquisar(campoPesquisar, pesquisa);
+	// } catch (Exception e) {
+	// throw new BusinessException(e);
+	// }
+	// }
 
 	@Override
 	public void excluir(Pessoa pessoa) throws BusinessException {
@@ -124,7 +118,7 @@ public class ClienteServiceImpl implements ClienteService {
 		try {
 
 			transaction.beginTransaction();
-			clienteDAO.delete(pessoa.getIdPessoa());
+			clienteDAO.remove(pessoa);
 			transaction.commit();
 
 		} catch (Exception e) {

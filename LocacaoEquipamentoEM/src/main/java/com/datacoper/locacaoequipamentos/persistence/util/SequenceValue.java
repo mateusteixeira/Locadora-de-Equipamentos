@@ -1,4 +1,4 @@
-package com.datacoper.locacaoequipamentos.persistence.dao.jdbc;
+package com.datacoper.locacaoequipamentos.persistence.util;
 
 public class SequenceValue {
 

@@ -1,4 +1,4 @@
-package com.datacoper.locacaoequipamentos.util;
+package com.datacoper.locacaoequipamentos.persistence.connections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * 
  * @author YaW Tecnologia
  */
-public class JPAUtil {
+public abstract class JPAUtil {
 
 	private static Logger log = Logger.getLogger(JPAUtil.class);
 
@@ -35,6 +35,8 @@ public class JPAUtil {
 	private static final String PERSISTENCE_UNIT_NAME = "locacaoPU";
 
 	private static EntityManagerFactory emf;
+
+	private static EntityManager em;
 
 	static {
 		try {
@@ -45,21 +47,15 @@ public class JPAUtil {
 		}
 	}
 
-	/**
-	 * @return Cria e retorna um componente <code>EntityManager</code>.
-	 * @throws Lança
-	 *             <code>RuntimeException</code> se
-	 *             <code>EntityManagerFactory</code> estiver fechada.
-	 */
 	public static EntityManager createEntityManager() {
-		if (!emf.isOpen())
-			throw new RuntimeException("EntityManagerFactory está fechada!");
-		return emf.createEntityManager();
+		if (em == null) {
+			if (!emf.isOpen())
+				throw new RuntimeException("EntityManagerFactory está fechada!");
+			em = emf.createEntityManager();
+		}
+		return em;
 	}
 
-	/**
-	 * Fecha o <code>EntityManagerFactory</code>.
-	 */
 	public static void closeEntityManagerFactory() {
 		if (emf.isOpen()) {
 			emf.close();

@@ -1,42 +1,56 @@
 package com.datacoper.locacaoequipamentos.common.model;
 
-public class Pais {
-	private Integer id_pais;
-	private String  nm_pais;
-	private String  sg_pais;
+import java.io.Serializable;
+
+import javax.persistence.*;
+
+/**
+ * The persistent class for the pais database table.
+ * 
+ */
+@Entity
+@Table(name = "pais")
+@NamedQuery(name = "Pais.findAll", query = "SELECT p FROM Pais p")
+public class Pais implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name = "id_pais")
+
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pais_id_seq")
+	private Integer idPais;
+
+	@Column(name = "nm_pais")
+	private String nmPais;
+
+	@Column(name = "sg_pais")
+	private String sgPais;
 
 	public Pais() {
-		super();
 	}
 
-	public Pais(Integer id_pais, String nm_pais, String sg_pais) {
-		super();
-		this.id_pais = id_pais;
-		this.nm_pais = nm_pais;
-		this.sg_pais = sg_pais;
+	public Integer getIdPais() {
+		return this.idPais;
 	}
 
-	public Integer getId_pais() {
-		return id_pais;
+	public void setIdPais(Integer idPais) {
+		this.idPais = idPais;
 	}
-	
-	public void setId_pais(Integer id_pais) {
-		this.id_pais = id_pais;
+
+	public String getNmPais() {
+		return this.nmPais;
 	}
-	
-	public String getNm_pais() {
-		return nm_pais;
+
+	public void setNmPais(String nmPais) {
+		this.nmPais = nmPais;
 	}
-	
-	public void setNm_pais(String nm_pais) {
-		this.nm_pais = nm_pais;
+
+	public String getSgPais() {
+		return this.sgPais;
 	}
-	
-	public String getSg_pais() {
-		return sg_pais;
+
+	public void setSgPais(String sgPais) {
+		this.sgPais = sgPais;
 	}
-	
-	public void setSg_pais(String sg_pais) {
-		this.sg_pais = sg_pais;
-	}
+
 }
