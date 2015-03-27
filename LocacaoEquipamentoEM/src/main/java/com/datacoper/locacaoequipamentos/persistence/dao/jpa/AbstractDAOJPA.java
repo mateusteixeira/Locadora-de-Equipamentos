@@ -39,6 +39,10 @@ public abstract class AbstractDAOJPA<T extends Object, PK extends Object>  {
 		validateEntityJPA(e);
 		em.remove(e);
 	}
+	
+	public T findByIdObj(T id) {
+		return em.find(entityClass, id);
+	}
 
 	public T findById(PK id) {
 		return em.find(entityClass, id);

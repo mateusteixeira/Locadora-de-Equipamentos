@@ -6,7 +6,6 @@ import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -20,8 +19,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.datacoper.locacaoequipamentos.client.cliente.FormCadastroCliente;
-import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoCadastro;
 import com.datacoper.locacaoequipamentos.client.formspadrao.FormPadraoPesquisa;
+import com.datacoper.locacaoequipamentos.common.model.Pais;
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 
 public class FormPrincipal extends JFrame {
@@ -53,17 +52,17 @@ public class FormPrincipal extends JFrame {
 	public FormPrincipal() {
 		initComponents();
 	}
-	
+
 	public void initComponents() {
 		setExtendedState(MAXIMIZED_BOTH);
-		
+
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			JOptionPane.showMessageDialog(null, "NÃ£o foi possÃ­vel carregar o \"Skin\" padrÃ£o. Definindo o padrÃ£o original.", "Erro",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 484);
@@ -103,20 +102,33 @@ public class FormPrincipal extends JFrame {
 			}
 		});
 		mnConsultas.add(mntmClientes);
+
+		JMenuItem mntmPas = new JMenuItem("País");
+		mntmPas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abreTelaPesquisa(null, new FormPadraoPesquisa<Pais>(Pais.class));
+			}
+		});
+		mnConsultas.add(mntmPas);
 	}
-	
+
 	public void abreTela(JInternalFrame ji) {
 		desktopPane.add(ji);
 		ji.setSize(600, 400);
 		ji.setVisible(true);
 	}
-	
-	private <T> void abreTelaPesquisa(Class<?> cad, FormPadraoPesquisa<Pessoa> formPadraoPesquisa) {
-		Object o = formPadraoPesquisa.abrirPesquisa();
-		if (o != null) {
+
+	private <T> void abreTelaPesquisa(Class<?> cad, FormPadraoPesquisa<T> formPadraoPesquisa) {
+		Object o = "";
+		try {
+			o = formPadraoPesquisa.abrirPesquisa();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		if (o != null && cad != null) {
 			try {
-				abreTela((JInternalFrame) cad.getConstructor(Pessoa.class).newInstance(o));
-			} catch(Exception ex) {
+				abreTela((JInternalFrame) cad.getConstructor(o.getClass()).newInstance(o));
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}

@@ -2,6 +2,7 @@ package com.datacoper.locacaoequipamentos.business.servicesimpl;
 
 import java.util.List;
 
+import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaService;
 import com.datacoper.locacaoequipamentos.persistence.dao.DAO;
 import com.datacoper.locacaoequipamentos.persistence.dao.DAOFactory;
@@ -30,6 +31,15 @@ public  class PesquisaServiceImpl implements PesquisaService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public <T> T pesquisarById(T object) throws BusinessException {
+		try {
+			return (T)dao.findByIdObj(object);
+		} catch (Exception ex) {
+			throw new BusinessException(ex);
 		}
 	}
 }

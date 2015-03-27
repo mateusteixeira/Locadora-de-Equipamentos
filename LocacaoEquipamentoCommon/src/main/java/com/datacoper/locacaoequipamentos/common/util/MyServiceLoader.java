@@ -26,270 +26,252 @@ import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaServi
 
 public final class MyServiceLoader<S> implements Iterable<S> {
 
-    private static final String PREFIX = "META-INF/services/";
+	private static final String PREFIX = "META-INF/services/";
 
-    private final Class<S> service;
+	private final Class<S> service;
 
-    private final ClassLoader loader;
+	private final ClassLoader loader;
 
-    private final AccessControlContext acc;
+	private final AccessControlContext acc;
 
-    private LinkedHashMap<String,S> providers = new LinkedHashMap<>();
+	private LinkedHashMap<String, S> providers = new LinkedHashMap<>();
 
-    private LazyIterator lookupIterator;
-    
-    private static Object[] paramsConstruct;
-    
-    private static Class[] paramsConstructType;
+	private LazyIterator lookupIterator;
 
-  
-    public void reload() {
-        providers.clear();
-        lookupIterator = new LazyIterator(service, loader);
-    }
+	private static Object[] paramsConstruct;
 
-    private MyServiceLoader(Class<S> svc, ClassLoader cl) {
-        service = Objects.requireNonNull(svc, "Service interface cannot be null");
-        loader = (cl == null) ? ClassLoader.getSystemClassLoader() : cl;
-        acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
-        reload();
-    }
+	private static Class[] paramsConstructType;
 
-    private static void fail(Class<?> service, String msg, Throwable cause)
-        throws ServiceConfigurationError
-    {
-        throw new ServiceConfigurationError(service.getName() + ": " + msg,
-                                            cause);
-    }
+	public void reload() {
+		providers.clear();
+		lookupIterator = new LazyIterator(service, loader);
+	}
 
-    private static void fail(Class<?> service, String msg)
-        throws ServiceConfigurationError
-    {
-        throw new ServiceConfigurationError(service.getName() + ": " + msg);
-    }
+	private MyServiceLoader(Class<S> svc, ClassLoader cl) {
+		service = Objects.requireNonNull(svc, "Service interface cannot be null");
+		loader = (cl == null) ? ClassLoader.getSystemClassLoader() : cl;
+		acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
+		reload();
+	}
 
-    private static void fail(Class<?> service, URL u, int line, String msg)
-        throws ServiceConfigurationError
-    {
-        fail(service, u + ":" + line + ": " + msg);
-    }
+	private static void fail(Class<?> service, String msg, Throwable cause) throws ServiceConfigurationError {
+		throw new ServiceConfigurationError(service.getName() + ": " + msg, cause);
+	}
 
-    private int parseLine(Class<?> service, URL u, BufferedReader r, int lc,
-                          List<String> names)
-        throws IOException, ServiceConfigurationError
-    {
-        String ln = r.readLine();
-        if (ln == null) {
-            return -1;
-        }
-        int ci = ln.indexOf('#');
-        if (ci >= 0) ln = ln.substring(0, ci);
-        ln = ln.trim();
-        int n = ln.length();
-        if (n != 0) {
-            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0))
-                fail(service, u, lc, "Illegal configuration-file syntax");
-            int cp = ln.codePointAt(0);
-            if (!Character.isJavaIdentifierStart(cp))
-                fail(service, u, lc, "Illegal provider-class name: " + ln);
-            for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
-                cp = ln.codePointAt(i);
-                if (!Character.isJavaIdentifierPart(cp) && (cp != '.'))
-                    fail(service, u, lc, "Illegal provider-class name: " + ln);
-            }
-            if (!providers.containsKey(ln) && !names.contains(ln))
-                names.add(ln);
-        }
-        return lc + 1;
-    }
+	private static void fail(Class<?> service, String msg) throws ServiceConfigurationError {
+		throw new ServiceConfigurationError(service.getName() + ": " + msg);
+	}
 
-    private Iterator<String> parse(Class<?> service, URL u)
-        throws ServiceConfigurationError
-    {
-        InputStream in = null;
-        BufferedReader r = null;
-        ArrayList<String> names = new ArrayList<>();
-        try {
-            in = u.openStream();
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
-            int lc = 1;
-            while ((lc = parseLine(service, u, r, lc, names)) >= 0);
-        } catch (IOException x) {
-            fail(service, "Error reading configuration file", x);
-        } finally {
-            try {
-                if (r != null) r.close();
-                if (in != null) in.close();
-            } catch (IOException y) {
-                fail(service, "Error closing configuration file", y);
-            }
-        }
-        return names.iterator();
-    }
+	private static void fail(Class<?> service, URL u, int line, String msg) throws ServiceConfigurationError {
+		fail(service, u + ":" + line + ": " + msg);
+	}
 
-    private class LazyIterator
-        implements Iterator<S>
-    {
+	private int parseLine(Class<?> service, URL u, BufferedReader r, int lc, List<String> names) throws IOException, ServiceConfigurationError {
+		String ln = r.readLine();
+		if (ln == null) {
+			return -1;
+		}
+		int ci = ln.indexOf('#');
+		if (ci >= 0)
+			ln = ln.substring(0, ci);
+		ln = ln.trim();
+		int n = ln.length();
+		if (n != 0) {
+			if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0))
+				fail(service, u, lc, "Illegal configuration-file syntax");
+			int cp = ln.codePointAt(0);
+			if (!Character.isJavaIdentifierStart(cp))
+				fail(service, u, lc, "Illegal provider-class name: " + ln);
+			for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
+				cp = ln.codePointAt(i);
+				if (!Character.isJavaIdentifierPart(cp) && (cp != '.'))
+					fail(service, u, lc, "Illegal provider-class name: " + ln);
+			}
+			if (!providers.containsKey(ln) && !names.contains(ln))
+				names.add(ln);
+		}
+		return lc + 1;
+	}
 
-        Class<S> service;
-        ClassLoader loader;
-        Enumeration<URL> configs = null;
-        Iterator<String> pending = null;
-        String nextName = null;
+	private Iterator<String> parse(Class<?> service, URL u) throws ServiceConfigurationError {
+		InputStream in = null;
+		BufferedReader r = null;
+		ArrayList<String> names = new ArrayList<>();
+		try {
+			in = u.openStream();
+			r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+			int lc = 1;
+			while ((lc = parseLine(service, u, r, lc, names)) >= 0)
+				;
+		} catch (IOException x) {
+			fail(service, "Error reading configuration file", x);
+		} finally {
+			try {
+				if (r != null)
+					r.close();
+				if (in != null)
+					in.close();
+			} catch (IOException y) {
+				fail(service, "Error closing configuration file", y);
+			}
+		}
+		return names.iterator();
+	}
 
-        private LazyIterator(Class<S> service, ClassLoader loader) {
-            this.service = service;
-            this.loader = loader;
-        }
+	private class LazyIterator implements Iterator<S> {
 
-        private boolean hasNextService() {
-            if (nextName != null) {
-                return true;
-            }
-            if (configs == null) {
-                try {
-                    String fullName = PREFIX + service.getName();
-                    if (loader == null)
-                        configs = ClassLoader.getSystemResources(fullName);
-                    else
-                        configs = loader.getResources(fullName);
-                } catch (IOException x) {
-                    fail(service, "Error locating configuration files", x);
-                }
-            }
-            while ((pending == null) || !pending.hasNext()) {
-                if (!configs.hasMoreElements()) {
-                    return false;
-                }
-                pending = parse(service, configs.nextElement());
-            }
-            nextName = pending.next();
-            return true;
-        }
+		Class<S> service;
+		ClassLoader loader;
+		Enumeration<URL> configs = null;
+		Iterator<String> pending = null;
+		String nextName = null;
 
-        private S nextService() {
-            if (!hasNextService())
-                throw new NoSuchElementException();
-            String cn = nextName;
-            nextName = null;
-            Class<?> c = null;
-            try {
-                c = Class.forName(cn, false, loader);
-            } catch (ClassNotFoundException x) {
-                fail(service,
-                     "Provider " + cn + " not found");
-            }
-            if (!service.isAssignableFrom(c)) {
-                fail(service,
-                     "Provider " + cn  + " not a subtype");
-            }
-            
-            Object[] o = paramsConstructType;
-            Object[] o1 = paramsConstruct;
-            
-            try {
-            	S p = null;
-            	if (paramsConstruct.length > 0) {
-            		p = service.cast(c.getConstructor(paramsConstructType).newInstance(paramsConstruct));
-            	} else {
-            		p = service.cast(c.newInstance());
-            	}
-            	
-                providers.put(cn, p);
-                return p;
-            } catch (Throwable x) {
-                fail(service,
-                     "Provider " + cn + " could not be instantiated",
-                     x);
-            }
-            throw new Error();          // This cannot happen
-        }
+		private LazyIterator(Class<S> service, ClassLoader loader) {
+			this.service = service;
+			this.loader = loader;
+		}
 
-        public boolean hasNext() {
-            if (acc == null) {
-                return hasNextService();
-            } else {
-                PrivilegedAction<Boolean> action = new PrivilegedAction<Boolean>() {
-                    public Boolean run() { return hasNextService(); }
-                };
-                return AccessController.doPrivileged(action, acc);
-            }
-        }
+		private boolean hasNextService() {
+			if (nextName != null) {
+				return true;
+			}
+			if (configs == null) {
+				try {
+					String fullName = PREFIX + service.getName();
+					if (loader == null)
+						configs = ClassLoader.getSystemResources(fullName);
+					else
+						configs = loader.getResources(fullName);
+				} catch (IOException x) {
+					fail(service, "Error locating configuration files", x);
+				}
+			}
+			while ((pending == null) || !pending.hasNext()) {
+				if (!configs.hasMoreElements()) {
+					return false;
+				}
+				pending = parse(service, configs.nextElement());
+			}
+			nextName = pending.next();
+			return true;
+		}
 
-        public S next() {
-            if (acc == null) {
-                return nextService();
-            } else {
-                PrivilegedAction<S> action = new PrivilegedAction<S>() {
-                    public S run() { return nextService(); }
-                };
-                return AccessController.doPrivileged(action, acc);
-            }
-        }
+		private S nextService() {
+			if (!hasNextService())
+				throw new NoSuchElementException();
+			String cn = nextName;
+			nextName = null;
+			Class<?> c = null;
+			try {
+				c = Class.forName(cn, false, loader);
+			} catch (ClassNotFoundException x) {
+				fail(service, "Provider " + cn + " not found");
+			}
+			if (!service.isAssignableFrom(c)) {
+				fail(service, "Provider " + cn + " not a subtype");
+			}
 
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
+			try {
+				S p = null;
+				if (paramsConstruct != null && paramsConstructType != null && paramsConstructType.length > 0 && paramsConstruct.length > 0) {
+					p = service.cast(c.getConstructor(paramsConstructType).newInstance(paramsConstruct));
+				} else {
+					p = service.cast(c.newInstance());
+				}
 
-    }
+				providers.put(cn, p);
+				return p;
+			} catch (Throwable x) {
+				fail(service, "Provider " + cn + " could not be instantiated", x);
+			}
+			throw new Error(); // This cannot happen
+		}
 
-    public Iterator<S> iterator() {
-        return new Iterator<S>() {
+		public boolean hasNext() {
+			if (acc == null) {
+				return hasNextService();
+			} else {
+				PrivilegedAction<Boolean> action = new PrivilegedAction<Boolean>() {
+					public Boolean run() {
+						return hasNextService();
+					}
+				};
+				return AccessController.doPrivileged(action, acc);
+			}
+		}
 
-            Iterator<Map.Entry<String,S>> knownProviders
-                = providers.entrySet().iterator();
+		public S next() {
+			if (acc == null) {
+				return nextService();
+			} else {
+				PrivilegedAction<S> action = new PrivilegedAction<S>() {
+					public S run() {
+						return nextService();
+					}
+				};
+				return AccessController.doPrivileged(action, acc);
+			}
+		}
 
-            public boolean hasNext() {
-                if (knownProviders.hasNext())
-                    return true;
-                return lookupIterator.hasNext();
-            }
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 
-            public S next() {
-                if (knownProviders.hasNext())
-                    return knownProviders.next().getValue();
-                return lookupIterator.next();
-            }
+	}
 
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
+	public Iterator<S> iterator() {
+		return new Iterator<S>() {
 
-        };
-    }
+			Iterator<Map.Entry<String, S>> knownProviders = providers.entrySet().iterator();
 
-    public static <S> MyServiceLoader<S> load(Class<S> service,
-                                            ClassLoader loader)
-    {
-        return new MyServiceLoader<>(service, loader);
-    }
+			public boolean hasNext() {
+				if (knownProviders.hasNext())
+					return true;
+				return lookupIterator.hasNext();
+			}
 
-    public static <S> MyServiceLoader<S> load(Class<S> service) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return MyServiceLoader.load(service, cl);
-    }
-    
-    public static <S> MyServiceLoader<S> load(Class<S> service, Class[] paramsConstructType, Object[] paramsConstruct) {
-    	MyServiceLoader.paramsConstruct = paramsConstruct;
-    	MyServiceLoader.paramsConstructType = paramsConstructType;
-    	
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return MyServiceLoader.load(service, cl);
-    } 
+			public S next() {
+				if (knownProviders.hasNext())
+					return knownProviders.next().getValue();
+				return lookupIterator.next();
+			}
 
-    public static <S> MyServiceLoader<S> loadInstalled(Class<S> service) {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        ClassLoader prev = null;
-        while (cl != null) {
-            prev = cl;
-            cl = cl.getParent();
-        }
-        return MyServiceLoader.load(service, prev);
-    }
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
 
-    public String toString() {
-        return "java.util.MyServiceLoader[" + service.getName() + "]";
-    }
+		};
+	}
+
+	public static <S> MyServiceLoader<S> load(Class<S> service, ClassLoader loader) {
+		return new MyServiceLoader<>(service, loader);
+	}
+
+	public static <S> MyServiceLoader<S> load(Class<S> service) {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		return MyServiceLoader.load(service, cl);
+	}
+
+	public static <S> MyServiceLoader<S> load(Class<S> service, Class[] paramsConstructType, Object[] paramsConstruct) {
+		MyServiceLoader.paramsConstruct = paramsConstruct;
+		MyServiceLoader.paramsConstructType = paramsConstructType;
+
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		return MyServiceLoader.load(service, cl);
+	}
+
+	public static <S> MyServiceLoader<S> loadInstalled(Class<S> service) {
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+		ClassLoader prev = null;
+		while (cl != null) {
+			prev = cl;
+			cl = cl.getParent();
+		}
+		return MyServiceLoader.load(service, prev);
+	}
+
+	public String toString() {
+		return "java.util.MyServiceLoader[" + service.getName() + "]";
+	}
 
 }
-

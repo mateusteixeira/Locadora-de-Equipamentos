@@ -2,6 +2,7 @@ package com.datacoper.locacaoequipamentos.common.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -41,7 +42,7 @@ public class Pessoa implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dt_nascimento")
 	private Date dtNascimento;
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dt_cadastro")
 	private Date dtCadastro;
@@ -51,11 +52,11 @@ public class Pessoa implements Serializable {
 	private EstadoCivil idEstadoCivil;
 
 	@Column(name = "nm_pessoa")
-	@ColumnTableSearch(header = "Nome", index = 2, comparador=Comparador.LIKE)
+	@ColumnTableSearch(header = "Nome", index = 2, comparador = Comparador.LIKE)
 	private String nmPessoa;
 
 	@Column(name = "nr_cpf")
-	@ColumnTableSearch(header = "CPF", index = 3, comparador=Comparador.LIKE)
+	@ColumnTableSearch(header = "CPF", index = 3, comparador = Comparador.LIKE)
 	private String nrCpf;
 
 	@Column(name = "nr_rg")
@@ -66,7 +67,7 @@ public class Pessoa implements Serializable {
 	private String nrTelefone;
 	@Enumerated(EnumType.ORDINAL)
 	private Sexo sexo;
-	
+
 	@Column(name = "ds_email")
 	private String dsEmail;
 
@@ -142,7 +143,11 @@ public class Pessoa implements Serializable {
 	}
 
 	public Date getDtCadastro() {
-		return dtCadastro;
+		if (dtCadastro == null) {
+			return new Date();
+		} else {
+			return this.dtCadastro;
+		}
 	}
 
 	public void setDtCadastro(Date dtCadastro) {
@@ -174,6 +179,9 @@ public class Pessoa implements Serializable {
 	}
 
 	public List<Endereco> getEnderecos() {
+		if (this.enderecos == null) {
+			enderecos = new LinkedList<Endereco>();
+		}
 		return this.enderecos;
 	}
 

@@ -1,6 +1,5 @@
 package com.datacoper.locacaoequipamentos.common.model;
 
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,32 +8,32 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-
 
 /**
  * The persistent class for the cidade database table.
  * 
  */
 @Entity
-@NamedQuery(name="Cidade.findAll", query="SELECT c FROM Cidade c")
+@NamedQuery(name = "Cidade.findAll", query = "SELECT c FROM Cidade c")
 public class Cidade implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="id_cidade")
+	@Column(name = "id_cidade")
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cidade_id_seq")
 	private Integer idCidade;
 
-	@Column(name="cd_estado")
-	private Integer cdEstado;
+	@ManyToOne
+	private Estado cdEstado;
 
-	@Column(name="nm_cidade")
+	@Column(name = "nm_cidade")
 	private String nmCidade;
 
-	//bi-directional many-to-one association to Endereco
-	@OneToMany(mappedBy="cidade")
+	// bi-directional many-to-one association to Endereco
+	@OneToMany(mappedBy = "cidade")
 	private List<Endereco> enderecos;
 
 	public Cidade() {
@@ -48,11 +47,11 @@ public class Cidade implements Serializable {
 		this.idCidade = idCidade;
 	}
 
-	public Integer getCdEstado() {
+	public Estado getCdEstado() {
 		return this.cdEstado;
 	}
 
-	public void setCdEstado(Integer cdEstado) {
+	public void setCdEstado(Estado cdEstado) {
 		this.cdEstado = cdEstado;
 	}
 
@@ -84,6 +83,12 @@ public class Cidade implements Serializable {
 		endereco.setCidade(null);
 
 		return endereco;
+	}
+
+	@Override
+	public String toString() {
+
+		return nmCidade;
 	}
 
 }

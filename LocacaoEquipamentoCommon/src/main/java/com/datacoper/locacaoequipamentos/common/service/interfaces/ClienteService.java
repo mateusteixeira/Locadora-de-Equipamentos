@@ -8,6 +8,8 @@ package com.datacoper.locacaoequipamentos.common.service.interfaces;
 import java.util.List;
 
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
+import com.datacoper.locacaoequipamentos.common.model.Cidade;
+import com.datacoper.locacaoequipamentos.common.model.Estado;
 import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 
 /**
@@ -20,5 +22,9 @@ public interface ClienteService {
 	void gravar(Pessoa cliente) throws BusinessException;
 
 	void excluir(Pessoa cliente) throws BusinessException;
+
+	List<Estado> getEstados() throws BusinessException;
+
+	List<Cidade> getCidades(Estado estado) throws BusinessException;
 
 }

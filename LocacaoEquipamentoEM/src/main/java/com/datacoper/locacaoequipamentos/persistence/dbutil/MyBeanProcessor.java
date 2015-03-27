@@ -29,6 +29,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Timestamp;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,9 +37,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
 import org.apache.commons.dbutils.BeanProcessor;
 
 import com.datacoper.locacaoequipamentos.common.util.ReflectionUtils;
+import com.datacoper.locacaoequipamentos.persistence.dao.DAO;
+import com.datacoper.locacaoequipamentos.persistence.dao.DAOFactory;
 
 /**
  * <p>
@@ -267,8 +273,7 @@ public class MyBeanProcessor extends BeanProcessor {
                 final String targetType = params[0].getName();
                 if ("java.sql.Date".equals(targetType)) {
                     value = new java.sql.Date(((java.util.Date) value).getTime());
-                } else
-                if ("java.sql.Time".equals(targetType)) {
+                } else if ("java.sql.Time".equals(targetType)) {
                     value = new java.sql.Time(((java.util.Date) value).getTime());
                 } else
                 if ("java.sql.Timestamp".equals(targetType)) {
@@ -277,26 +282,17 @@ public class MyBeanProcessor extends BeanProcessor {
                     value = new java.sql.Timestamp(tsValue.getTime());
                     ((Timestamp) value).setNanos(nanos);
                 }
-            } else
-            	if (value instanceof String && params[0].isEnum()) {
-                	/*Class<? extends Enum> classe = params[0].asSubclass(Enum.class);
-                	
-                	List<Enum> itensEnum = new LinkedList<>();
-    				for (Enum c : classe.getEnumConstants()) {
-    					itensEnum.add(c);
-    				}
-    				
-    				List<Field> campos = new LinkedList<Field>();
-    				for (Field f : classe.getDeclaredFields()) {
-    					if (!f.getClass().isInstance(Enum.class)) {
-    						Object vl = ReflectionUtils.getValueField(classe, f.getName(), f);
-    						if (vl.equals(value)) {
-    							
-    						}
-    					}
-    				}*/
-            		value = Enum.valueOf(params[0].asSubclass(Enum.class), (String) value);
-                }
+            } else if (value instanceof Integer && params[0].isEnum()) {
+            	value = params[0].getEnumConstants()[Integer.parseInt(String.valueOf(value))];
+            	
+            	//value = Enum.valueOf(params[0].asSubclass(Enum.class), (String) value);
+            } else if (params[0] instanceof Class && !target.getClass().equals(params.getClass()) && params[0].isAnnotationPresent(Entity.class)) {//validar
+            	try {
+					value = ((DAO)DAOFactory.getInstance(params[0])).findById(value);
+				} catch (Exception e) {
+					throw new SQLException("MyBeanProcessor, erro ao carregar entidade interna.");
+				}
+            }
 
             // Don't call setter if the value object isn't the right type
             if (this.isCompatibleType(value, params[0])) {

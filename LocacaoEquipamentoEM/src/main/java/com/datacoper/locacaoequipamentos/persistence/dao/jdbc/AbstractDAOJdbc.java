@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,8 +43,8 @@ import com.datacoper.locacaoequipamentos.persistence.util.SequenceValue;
 public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> implements DAO<T, PK> {
 
 	protected Connection connection;
-	private Class<T> entityClass;
-	
+	protected Class<T> entityClass;
+
 	public AbstractDAOJdbc(Class<T> entityClass) {
 		this(ConnectionController.getInstance().getConnection(), entityClass);
 	}
@@ -56,17 +57,23 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 	@Override
 	public T save(T object) throws Exception {
 		if (getId(object) == null) {
+			setId(object);
 			return insert(object);
 		} else {
 			return update(object);
 		}
 	}
 
-	private Object getId(Object object) throws IllegalArgumentException, IllegalAccessException {
-		Object o = ReflectionUtils.getValueByFieldByAnnotation(object.getClass(), Id.class, object);
-		if (o == null) {
-			o = ReflectionUtils.getValueByFieldByAnnotation(object.getClass(), EmbeddedId.class, object);
+	private void setId(T object) throws IllegalArgumentException, IllegalAccessException, Exception {
+		List<Field> f = ReflectionUtils.getFieldByAnnotation(entityClass, Id.class);
+		if (f != null && f.size() > 0) {
+			ReflectionUtils.setValue(f.get(0), object, nextId());
 		}
+
+	}
+
+	protected Object getId(Object object) throws IllegalArgumentException, IllegalAccessException {
+		Object o = ReflectionUtils.getValueByFieldByFirstValidValueByAnnotation(object.getClass(), object, Id.class, EmbeddedId.class);
 		return o;
 	}
 
@@ -125,13 +132,12 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 			for (Field field : classe.getDeclaredFields()) {
 				if (!field.isAnnotationPresent(Transient.class)) {
-					if (field.isAnnotationPresent(Enumerated.class) || field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(JoinColumn.class)
-							|| field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class)) {
+					if (field.isAnnotationPresent(Enumerated.class) || field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(JoinColumn.class) || field.isAnnotationPresent(Id.class)) {
 						Object value = ReflectionUtils.getValue(field, object);
 						if (value == null && field.isAnnotationPresent(GeneratedValue.class)) {
 							value = nextId(field);
 						}
-						
+
 						map.put(getColumnName(field), value);
 					}
 				}
@@ -192,18 +198,20 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 	private String getFormatterValue(Comparador cc, String valor) throws Exception {
 		if (cc.equals(Comparador.LIKE)) {
-			return " "+ cc.getSql() + " '%" + valor + "%'";
+			return " " + cc.getSql() + " '%" + valor + "%'";
 		} else {
 			return cc.getSql() + getFormattedValue(valor);
 		}
 	}
 
 	public String getFormattedValue(Object o) throws Exception {
+		if (o == null)
+			return null;
 		String retorno = "";
 
 		if (o instanceof String) {
 			retorno = "'" + o.toString() + "'";
-		} else if (o instanceof Date) {
+		} else if (o instanceof Date && o != null) {
 			retorno = "'" + new SimpleDateFormat("yyyy-MM-dd").format((Date) o) + "'";
 		} else if (o instanceof Enum) {
 			Object[] e = ((Class<? extends Object>) o.getClass()).getEnumConstants();
@@ -218,7 +226,7 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 					retorno = getFormattedValue(getId(o));
 				}
 			}
-		} else {
+		} else if (o != null) {
 			retorno = String.valueOf(o);
 		}
 
@@ -232,6 +240,22 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 		PreparedStatement pst = connection.prepareStatement(sql);
 		pst.executeUpdate();
+	}
+	
+	protected String getWhereId(Class entityClass, PK id) throws IllegalArgumentException, IllegalAccessException {
+		String where = "";
+
+		for (Field f : entityClass.getDeclaredFields()) {
+			if (f.isAnnotationPresent(Id.class)) {
+				where = getColumnName(f) + " = " + id;
+				break;
+			}
+		}
+		
+		if (!where.isEmpty()) {
+			where = " WHERE " + where;
+		}
+		return where;
 	}
 
 	protected String getWhere(T object) {
@@ -277,7 +301,7 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		return map;
 	}
 
-	private String getTableName(Class<?> classe) {
+	protected String getTableName(Class<?> classe) {
 		String nomeTabela = null;
 		if (classe.isAnnotationPresent(Table.class)) {
 			nomeTabela = ((Table) classe.getAnnotation(Table.class)).name();
@@ -304,11 +328,16 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 
 		return coluna;
 	}
+	@Override
+	public T findByIdObj(T obj) throws Exception {
+		return findById((PK) getId(obj));
+	}
 
 	@Override
 	public T findById(PK id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT *  FROM " + getTableName(entityClass) + getWhereId(entityClass, id);
+		
+		return getSingleResult(sql, entityClass);
 	}
 
 	@Override
@@ -317,7 +346,6 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		return getResult(sql, entityClass);
 	}
 
-	
 	@Override
 	public Integer nextId() throws Exception {
 		for (Field f : entityClass.getDeclaredFields()) {
@@ -327,23 +355,23 @@ public abstract class AbstractDAOJdbc<T extends Object, PK extends Object> imple
 		}
 		throw new PersistenceException("Não foi encontrada a anotação GeneratedValue para a classe");
 	}
-	
+
 	public Integer nextId(Field field) throws Exception {
-		GeneratedValue a =  field.getAnnotation(GeneratedValue.class);
+		GeneratedValue a = field.getAnnotation(GeneratedValue.class);
 		if (a.generator() == null || a.generator().equals("")) {
 			throw new PersistenceException("Não foi possível determinar o proximo sequencial. Verifique se a coluna está anotada com GeneratedValue");
 		}
-		
-		return nextId(a.generator()); 
+
+		return nextId(a.generator());
 	}
-	
-	public Integer nextId(String sequence) throws Exception {		
+
+	public Integer nextId(String sequence) throws Exception {
 		String sql = "select nextval('" + sequence + "') as value";
 		SequenceValue sequenceValue = getSingleResult(sql, SequenceValue.class);
 		return sequenceValue.getValue();
 	}
 
-	protected <S>S getSingleResult(String sql, Class<S> returnType) {
+	protected <S> S getSingleResult(String sql, Class<S> returnType) {
 		MyBeanHandler<S> resultHandler = new MyBeanHandler<S>(returnType);
 		return executeQuery(sql, resultHandler);
 	}

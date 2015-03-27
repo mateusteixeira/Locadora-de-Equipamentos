@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
+
 /**
  * The persistent class for the pais database table.
  * 
@@ -16,13 +18,15 @@ public class Pais implements Serializable {
 
 	@Id
 	@Column(name = "id_pais")
-
+	@ColumnTableSearch(header = "Código")
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pais_id_seq")
 	private Integer idPais;
 
+	@ColumnTableSearch(header = "Nome")
 	@Column(name = "nm_pais")
 	private String nmPais;
 
+	@ColumnTableSearch(header = "Sigla")
 	@Column(name = "sg_pais")
 	private String sgPais;
 

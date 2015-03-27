@@ -40,9 +40,9 @@ public abstract class ReflectionUtils {
 	public static Object getValueByFieldByFirstValidValueByAnnotation(Class classe, Object object, Class... annotation) throws IllegalArgumentException,
 			IllegalAccessException {
 		for (Class an : annotation) {
-			Object o = getFieldByAnnotation(classe, an);
-			if (o != null) {
-				return o;
+			List lista = getFieldByAnnotation(classe, an);
+			if (lista != null && lista.size() > 0) {
+				return getValue((Field) lista.get(0), object);
 			}
 		}
 		return null;
@@ -75,7 +75,6 @@ public abstract class ReflectionUtils {
 		}
 
 		o = field.get(object);
-		field.setAccessible(false);
 
 		/*
 		 * Volta o status de acessibildiade do capo, caso o mesmo tenha sido
@@ -85,6 +84,25 @@ public abstract class ReflectionUtils {
 			field.setAccessible(!field.isAccessible());
 		}
 		return o;
+	}
+
+	public static void setValue(Field field, Object object, Object value) throws IllegalArgumentException, IllegalAccessException {
+		Object o = null;
+		boolean flagAcessible = false;
+		if (!field.isAccessible()) {
+			field.setAccessible(true);
+			flagAcessible = true;
+		}
+
+		field.set(object, value);
+
+		/*
+		 * Volta o status de acessibildiade do capo, caso o mesmo tenha sido
+		 * alterado
+		 */
+		if (flagAcessible) {
+			field.setAccessible(!field.isAccessible());
+		}
 	}
 
 	public static Object getValueField(Class classeItem, String nmCampo, Object obj) throws NoSuchFieldError, IllegalArgumentException, IllegalAccessException {

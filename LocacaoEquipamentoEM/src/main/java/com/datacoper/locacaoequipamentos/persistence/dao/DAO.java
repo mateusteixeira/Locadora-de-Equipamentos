@@ -9,6 +9,8 @@ public interface DAO<T, PK> {
 	public void remove(T object) throws Exception;
 
 	public T findById(PK id) throws Exception;
+	
+	public T findByIdObj(T obj) throws Exception;
 
 	public List<T> search(String filtro, String valorFiltro, Class<T> classe) throws Exception;
 

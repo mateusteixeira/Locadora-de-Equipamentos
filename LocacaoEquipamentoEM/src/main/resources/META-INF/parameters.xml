@@ -7,5 +7,40 @@
 			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.ClienteDAOJpa</classJPA>-->
 			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.ClienteDAOJdbc</classJDBC>
 		</parametersDAO>
+		
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Cidade</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.CidadeDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.CidadeDAOJpa</classJPA> -->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.CidadeDAOJdbc</classJDBC>
+		</parametersDAO>
+		
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Endereco</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.EnderecoDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.EnderecoDAOJpa</classJPA> -->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.EnderecoDAOJdbc</classJDBC>
+		</parametersDAO>
+		
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Estado</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.EstadoDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.EstadoDAOJpa</classJPA> -->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.EstadoDAOJdbc</classJDBC>
+		</parametersDAO>
+		
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.Pais</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.PaisDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.PaisDAOJpa</classJPA> -->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.PaisDAOJdbc</classJDBC>
+		</parametersDAO>
+		
+		<parametersDAO>
+			<classe>com.datacoper.locacaoequipamentos.common.model.RelacaoPessoa</classe>
+			<classDao>com.datacoper.locacaoequipamentos.persistence.dao.interfaces.RelacaoPessoaDAO</classDao>
+			<!--<classJPA>com.datacoper.locacaoequipamentos.persistence.dao.jpa.RelacaoPessoaDAOJpa</classJPA> -->
+			<classJDBC>com.datacoper.locacaoequipamentos.persistence.dao.jdbc.RelacaoPessoaDAOJdbc</classJDBC>
+		</parametersDAO>
 	</daos>
 </parameters>

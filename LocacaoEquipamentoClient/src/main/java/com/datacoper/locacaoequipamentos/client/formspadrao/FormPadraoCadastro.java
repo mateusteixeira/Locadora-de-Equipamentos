@@ -2,16 +2,16 @@ package com.datacoper.locacaoequipamentos.client.formspadrao;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import static javax.swing.JOptionPane.*;
 
-import com.datacoper.locacaoequipamentos.client.cliente.FormCadastroCliente;
 import com.datacoper.locacaoequipamentos.client.util.ViewMethods;
+import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
 
 public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 
@@ -24,17 +24,15 @@ public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 	private JButton btnLocalizar;
 	private JButton btnLimpar;
 	private JButton btnExcluir;
-	
+
 	protected T object;
-	
+
 	public FormPadraoCadastro(T object) {
 		initComponents();
-		
+
 		this.object = object;
 	}
-	
-	
-	
+
 	public abstract void carregarTela(T obj);
 
 	protected void initComponents() {
@@ -130,6 +128,7 @@ public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 	public void gravar() {
 		ViewMethods.limparCampos(panelDados);
 		ViewMethods.chaveadorCampos(this.panelDados, false);
+		
 		btnGravar.setEnabled(false);
 		btnLimpar.setEnabled(false);
 		btnCancelar.setEnabled(false);
@@ -158,7 +157,6 @@ public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 
 	public abstract void limparCampos();
 
-
 	public void excluir() {
 		ViewMethods.limparCampos(panelDados);
 		ViewMethods.chaveadorCampos(this.panelDados, false);
@@ -169,4 +167,6 @@ public abstract class FormPadraoCadastro<T> extends JInternalFrame {
 		btnLimpar.setEnabled(false);
 		btnExcluir.setEnabled(false);
 	}
+
+	public abstract void verificarCamposObrigatorios(T objeto) throws BusinessException;
 }

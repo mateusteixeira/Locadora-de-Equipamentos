@@ -25,5 +25,4 @@ public class ClienteDAOJpa extends AbstractDAOJPA<Pessoa, Integer> implements Cl
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

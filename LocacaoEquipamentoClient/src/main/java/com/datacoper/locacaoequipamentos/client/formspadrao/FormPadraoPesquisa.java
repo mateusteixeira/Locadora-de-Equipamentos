@@ -40,6 +40,7 @@ import javax.swing.table.TableRowSorter;
 import com.datacoper.locacaoequipamentos.client.tablemodel.MyModelTablePesquisa;
 import com.datacoper.locacaoequipamentos.common.annotation.ColumnTableSearch;
 import com.datacoper.locacaoequipamentos.common.exception.BusinessException;
+import com.datacoper.locacaoequipamentos.common.model.Pessoa;
 import com.datacoper.locacaoequipamentos.common.service.ServiceLocator;
 import com.datacoper.locacaoequipamentos.common.service.interfaces.PesquisaService;
 
@@ -235,9 +236,9 @@ public class FormPadraoPesquisa<T> extends JDialog {
 		return null;
 	}
 
-	public T abrirPesquisa() {
+	public T abrirPesquisa() throws BusinessException {
 		setVisible(true);
-		return getSelectedRow(table.getSelectedRow());
+		return service.pesquisarById(getSelectedRow(table.getSelectedRow()));
 	}
 	
 	public class Filtros {

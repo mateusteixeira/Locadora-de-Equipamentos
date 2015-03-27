@@ -42,7 +42,7 @@ public abstract class ViewMethods {
 			} else {
 				if (component instanceof JTextComponent) {
 					((JTextComponent) component).setText("");
-				} else if (component instanceof JComboBox) {
+				} else if (component instanceof JComboBox && ((JComboBox) component).getModel().getSize() > 0) {
 					((JComboBox) component).setSelectedIndex(0);
 				} else if (component instanceof JDateChooser) {
 					((JDateChooser) component).setDate(null);
